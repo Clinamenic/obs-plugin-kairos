@@ -1,6 +1,6 @@
 # starter-obs-plugin
 
-A general-purpose starter workspace for building compliant, maintainable [Obsidian](https://obsidian.md/) plugins. Modeled on the SAWA framework pattern, adapted specifically for the Obsidian plugin ecosystem.
+A general-purpose starter workspace for building compliant, maintainable [Obsidian](https://obsidian.md/) plugins.
 
 ## What is included
 
