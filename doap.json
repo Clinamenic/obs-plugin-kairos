@@ -4,12 +4,12 @@
         "http://usefulinc.com/ns/doap#"
     ],
     "@type": "SoftwareApplication",
-    "name": "{{PLUGIN_NAME}}",
-    "description": "{{PLUGIN_DESCRIPTION}}",
-    "url": "{{REPOSITORY_URL}}",
+    "name": "Kairos",
+    "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
+    "url": "https://github.com/clinamenic/obs-plugin-kairos",
     "version": "0.1.0",
-    "dateCreated": "{{CREATION_DATE}}",
-    "dateModified": "{{CREATION_DATE}}",
+    "dateCreated": "2026-04-25",
+    "dateModified": "2026-04-25",
     "license": "https://opensource.org/licenses/MIT",
     "programmingLanguage": [
         "TypeScript"
@@ -19,38 +19,38 @@
     "operatingSystem": "macOS, Windows, Linux",
     "author": {
         "@type": "Person",
-        "name": "{{AUTHOR_NAME}}",
-        "url": "{{AUTHOR_URL}}"
+        "name": "clinamenic",
+        "url": "https://github.com/clinamenic"
     },
     "repository": {
         "@type": "SoftwareSourceCode",
-        "url": "{{REPOSITORY_URL}}",
+        "url": "https://github.com/clinamenic/obs-plugin-kairos",
         "programmingLanguage": "TypeScript",
         "license": "https://opensource.org/licenses/MIT",
-        "codeRepository": "{{REPOSITORY_URL}}"
+        "codeRepository": "https://github.com/clinamenic/obs-plugin-kairos"
     },
-    "issueTracker": "{{REPOSITORY_URL}}/issues",
-    "releaseNotes": "{{REPOSITORY_URL}}/releases",
+    "issueTracker": "https://github.com/clinamenic/obs-plugin-kairos/issues",
+    "releaseNotes": "https://github.com/clinamenic/obs-plugin-kairos/releases",
     "changelog": {
         "@type": "WebPage",
-        "url": "{{REPOSITORY_URL}}/blob/main/CHANGELOG.md",
+        "url": "https://github.com/clinamenic/obs-plugin-kairos/blob/main/CHANGELOG.md",
         "description": "Plugin changelog with version history"
     },
     "keywords": [
         "obsidian",
         "obsidian-plugin",
-        "{{KEYWORD_1}}",
-        "{{KEYWORD_2}}"
+        "journal",
+        "daily-notes"
     ],
     "featureList": [
-        "{{FEATURE_1}}",
-        "{{FEATURE_2}}"
+        "Daily journal entry dashboard",
+        "Structured frontmatter field editing"
     ],
     "softwareRequirements": [
         {
             "@type": "SoftwareApplication",
             "name": "Obsidian",
-            "version": "{{MIN_OBSIDIAN_VERSION}}"
+            "version": "1.0.0"
         }
     ],
     "buildSystem": {
@@ -65,23 +65,23 @@
             "version": "5.0+"
         }
     ],
-    "obsidianPluginId": "{{PLUGIN_ID}}",
-    "obsidianMinVersion": "{{MIN_OBSIDIAN_VERSION}}",
+    "obsidianPluginId": "kairos",
+    "obsidianMinVersion": "1.0.0",
     "releases": [
         {
             "@type": "SoftwareRelease",
-            "version": "{{RELEASE_VERSION}}",
-            "url": "{{REPOSITORY_URL}}/releases/tag/v{{RELEASE_VERSION}}",
-            "releaseDate": "{{RELEASE_DATE}}",
-            "description": "{{RELEASE_DESCRIPTION}}"
+            "version": "0.1.0",
+            "url": "https://github.com/clinamenic/obs-plugin-kairos/releases/tag/v0.1.0",
+            "releaseDate": "2026-04-25",
+            "description": "Initial release"
         }
     ],
     "relatedProjects": [
         {
             "@type": "SoftwareApplication",
-            "name": "{{RELATED_PROJECT_NAME}}",
-            "url": "{{RELATED_PROJECT_URL}}",
-            "description": "{{RELATED_PROJECT_DESCRIPTION}}"
+            "name": "starter-obs-plugin",
+            "url": "https://github.com/clinamenic/starter-obs-plugin",
+            "description": "Obsidian plugin starter template"
         }
     ]
 }

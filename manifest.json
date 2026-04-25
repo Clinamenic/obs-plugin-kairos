@@ -1,10 +1,10 @@
 {
-  "id": "{{PLUGIN_ID}}",
-  "name": "{{PLUGIN_NAME}}",
+  "id": "kairos",
+  "name": "Kairos",
   "version": "0.1.0",
-  "minAppVersion": "{{MIN_OBSIDIAN_VERSION}}",
-  "description": "{{PLUGIN_DESCRIPTION}}",
-  "author": "{{AUTHOR_NAME}}",
-  "authorUrl": "{{AUTHOR_URL}}",
-  "isDesktopOnly": false
+  "minAppVersion": "1.0.0",
+  "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
+  "author": "clinamenic",
+  "authorUrl": "https://github.com/clinamenic",
+  "isDesktopOnly": true
 }
