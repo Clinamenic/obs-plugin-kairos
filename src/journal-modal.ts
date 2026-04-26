@@ -74,10 +74,13 @@ export class JournalModal extends Modal {
   private filmsContainer!: HTMLElement;
   private filmsInput!: HTMLInputElement;
   private filmsSuggestions!: HTMLElement;
+  private locationsContainer!: HTMLElement;
   private locationsInput!: HTMLInputElement;
   private locationsSuggestions!: HTMLElement;
   private extraFieldEls: Record<string, HTMLInputElement> = {};
   private extraFieldSuggestions: Record<string, HTMLElement> = {};
+  private extraFieldContainers: Record<string, HTMLElement> = {};
+  private extraListValues: Record<string, string[]> = {};
   private mediaGrid!: HTMLElement;
 
   constructor(app: App, plugin: KairosPlugin, date?: Date) {
@@ -304,19 +307,32 @@ export class JournalModal extends Modal {
 
     // Locations
     body.createEl("label", { cls: "kairos-field-label", text: "Locations" });
-    const locationsWrapper = body.createDiv({ cls: "kairos-chip-input-row" });
-    this.locationsInput = locationsWrapper.createEl("input", {
+    const locationsWrapper = body.createDiv({ cls: "kairos-chip-field" });
+    const locationsInputRow = locationsWrapper.createDiv({
+      cls: "kairos-chip-input-row",
+    });
+    this.locationsInput = locationsInputRow.createEl("input", {
       cls: "kairos-chip-input",
-      attr: {
-        type: "text",
-        placeholder: "e.g. US, CA, San Francisco",
-      },
+      attr: { type: "text", placeholder: "Add a location..." },
     }) as HTMLInputElement;
-    this.locationsSuggestions = locationsWrapper.createDiv({
+    this.locationsSuggestions = locationsInputRow.createDiv({
       cls: "kairos-suggestions",
     });
     this.locationsSuggestions.hide();
-    this.locationsInput.addEventListener("change", () => this.saveLocations());
+    this.locationsContainer = locationsWrapper.createDiv({
+      cls: "kairos-chip-container",
+    });
+    this.locationsInput.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === ",") {
+        e.preventDefault();
+        const val = this.locationsInput.value.trim().replace(/,$/, "");
+        if (val) {
+          this.addLocation(val);
+          this.locationsInput.value = "";
+          this.locationsSuggestions.hide();
+        }
+      }
+    });
     this.locationsInput.addEventListener("input", () =>
       this.updateLocationsSuggestions()
     );
@@ -339,28 +355,69 @@ export class JournalModal extends Modal {
           cls: "kairos-field-label",
           text: field.label || field.key,
         });
-        const fieldWrapper = body.createDiv({ cls: "kairos-chip-input-row" });
-        const input = fieldWrapper.createEl("input", {
-          cls: "kairos-chip-input",
-          attr: { type: "text" },
-        }) as HTMLInputElement;
-        const sugEl = fieldWrapper.createDiv({ cls: "kairos-suggestions" });
-        sugEl.hide();
-        input.addEventListener("change", () =>
-          this.saveExtraField(field, input.value)
-        );
-        input.addEventListener("input", () =>
-          this.updateExtraFieldSuggestions(field, input, sugEl)
-        );
-        document.addEventListener(
-          "click",
-          (e: MouseEvent) => {
-            if (!fieldWrapper.contains(e.target as Node)) sugEl.hide();
-          },
-          { capture: true }
-        );
-        this.extraFieldEls[field.key] = input;
-        this.extraFieldSuggestions[field.key] = sugEl;
+        if (field.type === "list") {
+          const fieldWrapper = body.createDiv({ cls: "kairos-chip-field" });
+          const fieldInputRow = fieldWrapper.createDiv({
+            cls: "kairos-chip-input-row",
+          });
+          const input = fieldInputRow.createEl("input", {
+            cls: "kairos-chip-input",
+            attr: { type: "text", placeholder: `Add a value...` },
+          }) as HTMLInputElement;
+          const sugEl = fieldInputRow.createDiv({ cls: "kairos-suggestions" });
+          sugEl.hide();
+          const container = fieldWrapper.createDiv({
+            cls: "kairos-chip-container",
+          });
+          input.addEventListener("keydown", (e: KeyboardEvent) => {
+            if (e.key === "Enter" || e.key === ",") {
+              e.preventDefault();
+              const val = input.value.trim().replace(/,$/, "");
+              if (val) {
+                this.addExtraListValue(field, val);
+                input.value = "";
+                sugEl.hide();
+              }
+            }
+          });
+          input.addEventListener("input", () =>
+            this.updateExtraFieldSuggestions(field, input, sugEl)
+          );
+          document.addEventListener(
+            "click",
+            (e: MouseEvent) => {
+              if (!fieldWrapper.contains(e.target as Node)) sugEl.hide();
+            },
+            { capture: true }
+          );
+          this.extraFieldEls[field.key] = input;
+          this.extraFieldSuggestions[field.key] = sugEl;
+          this.extraFieldContainers[field.key] = container;
+          this.extraListValues[field.key] = [];
+        } else {
+          const fieldWrapper = body.createDiv({ cls: "kairos-chip-input-row" });
+          const input = fieldWrapper.createEl("input", {
+            cls: "kairos-chip-input",
+            attr: { type: "text" },
+          }) as HTMLInputElement;
+          const sugEl = fieldWrapper.createDiv({ cls: "kairos-suggestions" });
+          sugEl.hide();
+          input.addEventListener("change", () =>
+            this.saveExtraField(field, input.value)
+          );
+          input.addEventListener("input", () =>
+            this.updateExtraFieldSuggestions(field, input, sugEl)
+          );
+          document.addEventListener(
+            "click",
+            (e: MouseEvent) => {
+              if (!fieldWrapper.contains(e.target as Node)) sugEl.hide();
+            },
+            { capture: true }
+          );
+          this.extraFieldEls[field.key] = input;
+          this.extraFieldSuggestions[field.key] = sugEl;
+        }
       }
     }
 
@@ -450,18 +507,19 @@ export class JournalModal extends Modal {
 
     this.renderPeopleChips();
     this.renderFilmsChips();
-    this.locationsInput.value = this.locations.join(", ");
+    this.renderLocationsChips();
 
     for (const field of this.plugin.settings.extraFields) {
       const el = this.extraFieldEls[field.key];
       if (!el) continue;
       const val = fm[field.key];
       if (field.type === "list") {
-        el.value = Array.isArray(val)
-          ? val.join(", ")
+        this.extraListValues[field.key] = Array.isArray(val)
+          ? val.map(String).filter(Boolean)
           : val != null
-          ? String(val)
-          : "";
+          ? String(val).split(",").map((s) => s.trim()).filter(Boolean)
+          : [];
+        this.renderExtraListChips(field);
       } else {
         el.value = val != null ? String(val) : "";
       }
@@ -483,9 +541,17 @@ export class JournalModal extends Modal {
     this.locations = [];
     this.renderPeopleChips();
     this.renderFilmsChips();
-    this.locationsInput.value = "";
+    this.renderLocationsChips();
     for (const key of Object.keys(this.extraFieldEls)) {
-      this.extraFieldEls[key].value = "";
+      const field = this.plugin.settings.extraFields.find(
+        (f) => f.key === key
+      );
+      if (field?.type === "list") {
+        this.extraListValues[key] = [];
+        this.renderExtraListChips(field);
+      } else {
+        this.extraFieldEls[key].value = "";
+      }
     }
     this.mediaGrid.empty();
   }
@@ -630,13 +696,28 @@ export class JournalModal extends Modal {
   // Locations
   // -------------------------------------------------------------------------
 
+  private addLocation(value: string): void {
+    if (!value || this.locations.includes(value)) return;
+    this.locations.push(value);
+    this.renderLocationsChips();
+    this.saveLocations();
+  }
+
+  private renderLocationsChips(): void {
+    this.locationsContainer.empty();
+    for (const loc of this.locations) {
+      this.locationsContainer.appendChild(
+        this.createChip(loc, () => {
+          this.locations = this.locations.filter((l) => l !== loc);
+          this.renderLocationsChips();
+          this.saveLocations();
+        })
+      );
+    }
+  }
+
   private async saveLocations(): Promise<void> {
     if (!this.currentFile) return;
-    const raw = this.locationsInput.value;
-    this.locations = raw
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
     await this.app.fileManager.processFrontMatter(
       this.currentFile,
       (fm) => {
@@ -647,11 +728,12 @@ export class JournalModal extends Modal {
 
   private updateLocationsSuggestions(): void {
     const q = this.locationsInput.value.trim();
-    const results = searchFieldValues(this.app, "locations", q, "journal-entry");
+    const results = searchFieldValues(this.app, "locations", q, "journal-entry")
+      .filter((v) => !this.locations.includes(v));
     this.renderSuggestions(this.locationsSuggestions, results, (value) => {
-      this.locationsInput.value = value;
+      this.addLocation(value);
+      this.locationsInput.value = "";
       this.locationsSuggestions.hide();
-      this.saveLocations();
     });
   }
 
@@ -659,23 +741,48 @@ export class JournalModal extends Modal {
   // Extra fields
   // -------------------------------------------------------------------------
 
-  private async saveExtraField(
-    field: ExtraField,
-    rawValue: string
-  ): Promise<void> {
+  private addExtraListValue(field: ExtraField, value: string): void {
+    if (!value) return;
+    if (!this.extraListValues[field.key]) {
+      this.extraListValues[field.key] = [];
+    }
+    if (this.extraListValues[field.key].includes(value)) return;
+    this.extraListValues[field.key].push(value);
+    this.renderExtraListChips(field);
+    this.saveExtraField(field);
+  }
+
+  private renderExtraListChips(field: ExtraField): void {
+    const container = this.extraFieldContainers[field.key];
+    if (!container) return;
+    container.empty();
+    for (const val of this.extraListValues[field.key] ?? []) {
+      container.appendChild(
+        this.createChip(val, () => {
+          this.extraListValues[field.key] = this.extraListValues[
+            field.key
+          ].filter((v) => v !== val);
+          this.renderExtraListChips(field);
+          this.saveExtraField(field);
+        })
+      );
+    }
+  }
+
+  private async saveExtraField(field: ExtraField, rawValue?: string): Promise<void> {
     if (!this.currentFile) return;
-    const value =
-      field.type === "list"
-        ? rawValue
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : rawValue.trim();
+    let value: string | string[] | null;
+    if (field.type === "list") {
+      const chips = this.extraListValues[field.key] ?? [];
+      value = chips.length ? chips : null;
+    } else {
+      const trimmed = (rawValue ?? "").trim();
+      value = trimmed || null;
+    }
     await this.app.fileManager.processFrontMatter(
       this.currentFile,
       (fm) => {
-        fm[field.key] =
-          (Array.isArray(value) ? value.length : value) ? value : null;
+        fm[field.key] = value;
       }
     );
   }
@@ -686,11 +793,20 @@ export class JournalModal extends Modal {
     sugEl: HTMLElement
   ): void {
     const q = input.value.trim();
-    const results = searchFieldValues(this.app, field.key, q, "journal-entry");
+    const existing = field.type === "list"
+      ? (this.extraListValues[field.key] ?? [])
+      : [];
+    const results = searchFieldValues(this.app, field.key, q, "journal-entry")
+      .filter((v) => !existing.includes(v));
     this.renderSuggestions(sugEl, results, (value) => {
-      input.value = value;
+      if (field.type === "list") {
+        this.addExtraListValue(field, value);
+        input.value = "";
+      } else {
+        input.value = value;
+        this.saveExtraField(field, value);
+      }
       sugEl.hide();
-      this.saveExtraField(field, value);
     });
   }
 
