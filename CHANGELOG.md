@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.7 - 2026-04-25
+
+Commit: c0ed310 (2026-04-25T20:53:00-07:00)
+
+### Changed
+
+- fix(ui): removed hidden date picker input and wrapper div; calendar icon button kept as-is
+- fix(ui): editor content area changed from max-height to fixed height of 300px
+- style(ui): header date shortened to abbreviated day and month (e.g. Sat 25 Apr 2026)
+
 ## 0.2.6 - 2026-04-25
 
 Commit: 382cb8f (2026-04-25T20:41:00-07:00)
