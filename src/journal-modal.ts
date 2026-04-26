@@ -86,8 +86,8 @@ export class JournalModal extends Modal {
   private extraFieldContainers: Record<string, HTMLElement> = {};
   private extraListValues: Record<string, string[]> = {};
   private mediaGrid!: HTMLElement;
-  /** Native date input for showPicker; mounted on document.body so it never affects modal header layout */
-  private datePickerInput: HTMLInputElement | null = null;
+  /** Filled in buildShell: syncs with currentDate in loadDate */
+  private calendarDateInput: HTMLInputElement | null = null;
 
   constructor(app: App, plugin: KairosPlugin, date?: Date) {
     super(app);
@@ -114,8 +114,7 @@ export class JournalModal extends Modal {
     this.titleEl.parentElement
       ?.querySelectorAll(".kairos-header")
       .forEach((el) => el.remove());
-    this.datePickerInput?.remove();
-    this.datePickerInput = null;
+    this.calendarDateInput = null;
     this.contentEl.empty();
   }
 
@@ -129,8 +128,6 @@ export class JournalModal extends Modal {
     // scrollable .modal-content), so stickiness comes for free from the DOM
     // structure rather than CSS tricks.
     const modalHeader = this.titleEl.parentElement!;
-    this.datePickerInput?.remove();
-    this.datePickerInput = null;
     modalHeader.querySelectorAll(".kairos-header").forEach((el) => el.remove());
     const header = modalHeader.createDiv({ cls: "kairos-header" });
 
@@ -143,13 +140,31 @@ export class JournalModal extends Modal {
       attr: { "aria-label": "Go to today" },
     });
 
-    // Calendar icon button (opens native date picker)
-    const calBtn = left.createEl("button", {
-      cls: "kairos-header-btn",
-      attr: { "aria-label": "Jump to date", type: "button" },
+    // One control: label styled as a button, transparent type=date on top of the icon (native click opens the picker; no showPicker/body input)
+    const calLabel = left.createEl("label", {
+      cls: "kairos-header-btn kairos-calendar-label",
+      attr: { "aria-label": "Jump to date" },
     });
-    calBtn.innerHTML =
+    const calIcon = calLabel.createSpan({ cls: "kairos-calendar-icon" });
+    calIcon.innerHTML =
       '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+    const dateInput = calLabel.createEl("input", {
+      cls: "kairos-calendar-date-input",
+      attr: { type: "date" },
+    }) as HTMLInputElement;
+    this.calendarDateInput = dateInput;
+    dateInput.value = dateToIso(this.currentDate);
+    dateInput.addEventListener("change", () => {
+      const v = dateInput.value;
+      if (!v) return;
+      const parts = v.split("-");
+      if (parts.length !== 3) return;
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10);
+      const d = parseInt(parts[2], 10);
+      if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d)) return;
+      void this.navigateTo(new Date(y, m - 1, d));
+    });
 
     // Centre: prev / date / next
     const centre = header.createDiv({ cls: "kairos-header-center" });
@@ -181,40 +196,6 @@ export class JournalModal extends Modal {
     prevBtn.addEventListener("click", () => this.navigateDay(-1));
     nextBtn.addEventListener("click", () => this.navigateDay(1));
     todayBtn.addEventListener("click", () => this.navigateTo(new Date()));
-
-    // Native date input on document.body so it cannot affect .modal-header spacing; showPicker still works
-    const dateInput = document.createElement("input");
-    dateInput.type = "date";
-    dateInput.className = "kairos-header-date-input";
-    dateInput.tabIndex = -1;
-    dateInput.setAttribute("aria-hidden", "true");
-    document.body.appendChild(dateInput);
-    this.datePickerInput = dateInput;
-    calBtn.addEventListener("click", (evt: Event) => {
-      evt.preventDefault();
-      (dateInput as HTMLInputElement).value = dateToIso(this.currentDate);
-      const withPicker = dateInput as HTMLInputElement & { showPicker?: () => void };
-      try {
-        if (typeof withPicker.showPicker === "function") {
-          withPicker.showPicker();
-        } else {
-          (dateInput as HTMLInputElement).click();
-        }
-      } catch {
-        (dateInput as HTMLInputElement).click();
-      }
-    });
-    dateInput.addEventListener("change", () => {
-      const v = (dateInput as HTMLInputElement).value;
-      if (!v) return;
-      const parts = v.split("-");
-      if (parts.length !== 3) return;
-      const y = parseInt(parts[0], 10);
-      const m = parseInt(parts[1], 10);
-      const d = parseInt(parts[2], 10);
-      if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d)) return;
-      void this.navigateTo(new Date(y, m - 1, d));
-    });
     closeBtn.addEventListener("click", () => this.close());
 
     // ── Body ─────────────────────────────────────────────────────────────────
@@ -282,11 +263,11 @@ export class JournalModal extends Modal {
       attr: { "aria-label": "Add media", title: "Add media" },
     });
     dropHint.innerHTML =
-      '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+      '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
 
     this.mediaGrid = mediaRow.createDiv({ cls: "kairos-media-grid" });
 
-    // Hidden file input — opened by clicking the camera icon
+    // Hidden file input — opened by clicking the add-media tile
     const fileInput = dropZone.createEl("input", {
       attr: {
         type: "file",
@@ -543,8 +524,10 @@ export class JournalModal extends Modal {
   private async loadDate(date: Date): Promise<void> {
     this.currentDate = date;
     this.headerDateEl.setText(formatHeaderDate(date));
-
     const isoDate = dateToIso(date);
+    if (this.calendarDateInput) {
+      this.calendarDateInput.value = isoDate;
+    }
     let file = findEntryByDate(this.app, isoDate);
 
     if (!file) {
