@@ -124,26 +124,6 @@ export class JournalModal extends Modal {
     modalHeader.querySelectorAll(".kairos-header").forEach((el) => el.remove());
     const header = modalHeader.createDiv({ cls: "kairos-header" });
 
-    // Left spacer (balances the right slot so the centre stays truly centred)
-    header.createDiv({ cls: "kairos-header-left" });
-
-    // Centre: prev / date / next
-    const centre = header.createDiv({ cls: "kairos-header-center" });
-
-    const prevBtn = centre.createEl("button", {
-      cls: "kairos-header-btn",
-      text: "\u2039",
-      attr: { "aria-label": "Previous day" },
-    });
-
-    this.headerDateEl = centre.createEl("span", { cls: "kairos-header-date" });
-
-    const nextBtn = centre.createEl("button", {
-      cls: "kairos-header-btn",
-      text: "\u203a",
-      attr: { "aria-label": "Next day" },
-    });
-
     // Left: Today / calendar
     const left = header.createDiv({ cls: "kairos-header-left" });
 
@@ -165,6 +145,23 @@ export class JournalModal extends Modal {
       cls: "kairos-date-picker",
       attr: { type: "date", "aria-label": "Jump to date", tabindex: "-1" },
     }) as HTMLInputElement;
+
+    // Centre: prev / date / next
+    const centre = header.createDiv({ cls: "kairos-header-center" });
+
+    const prevBtn = centre.createEl("button", {
+      cls: "kairos-header-btn",
+      text: "\u2039",
+      attr: { "aria-label": "Previous day" },
+    });
+
+    this.headerDateEl = centre.createEl("span", { cls: "kairos-header-date" });
+
+    const nextBtn = centre.createEl("button", {
+      cls: "kairos-header-btn",
+      text: "\u203a",
+      attr: { "aria-label": "Next day" },
+    });
 
     // Right: close
     const right = header.createDiv({ cls: "kairos-header-right" });
