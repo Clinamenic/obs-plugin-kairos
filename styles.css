@@ -361,6 +361,12 @@
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
+  cursor: pointer;
+  transition: color 80ms;
+}
+
+.kairos-drop-hint:hover {
+  color: var(--text-normal);
 }
 
 .kairos-media-grid {
