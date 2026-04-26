@@ -1,4 +1,4 @@
-import { App, Modal, TFile, normalizePath } from "obsidian";
+import { App, Menu, Modal, TFile, normalizePath } from "obsidian";
 import type KairosPlugin from "./main";
 import type { ExtraField } from "./types";
 import {
@@ -185,26 +185,6 @@ export class JournalModal extends Modal {
     // Content
     const editorWrap = body.createDiv({ cls: "kairos-editor-wrap" });
 
-    // Toolbar
-    const toolbar = editorWrap.createDiv({ cls: "kairos-editor-toolbar" });
-    const toolbarButtons: { label: string; title: string; action: () => void }[] = [
-      { label: "B",    title: "Bold (Mod+B)",   action: () => this.editorView && wrapSelection(this.editorView, "**") },
-      { label: "I",    title: "Italic (Mod+I)", action: () => this.editorView && wrapSelection(this.editorView, "*") },
-      { label: "[ ]",  title: "Link (Mod+K)",   action: () => this.editorView && insertLinkSkeleton(this.editorView) },
-      { label: "`  `", title: "Code (Mod+`)",   action: () => this.editorView && wrapSelection(this.editorView, "`") },
-    ];
-    for (const btn of toolbarButtons) {
-      const el = toolbar.createEl("button", {
-        cls: "kairos-toolbar-btn",
-        text: btn.label,
-        attr: { title: btn.title, type: "button" },
-      });
-      el.addEventListener("mousedown", (e: MouseEvent) => {
-        e.preventDefault(); // keep focus in editor
-        btn.action();
-      });
-    }
-
     // Editor area
     const editorEl = editorWrap.createDiv({ cls: "kairos-editor-content" });
     this.editorView = createEditor(
@@ -213,6 +193,41 @@ export class JournalModal extends Modal {
       "",
       (doc) => this.scheduleContentSave(doc)
     );
+
+    editorEl.addEventListener("contextmenu", (e: MouseEvent) => {
+      e.preventDefault();
+      const menu = new Menu();
+      menu.addItem((item) =>
+        item.setTitle("Bold").setIcon("bold")
+          .onClick(() => this.editorView && wrapSelection(this.editorView, "**"))
+      );
+      menu.addItem((item) =>
+        item.setTitle("Italic").setIcon("italic")
+          .onClick(() => this.editorView && wrapSelection(this.editorView, "*"))
+      );
+      menu.addItem((item) =>
+        item.setTitle("Code").setIcon("code")
+          .onClick(() => this.editorView && wrapSelection(this.editorView, "`"))
+      );
+      menu.addItem((item) =>
+        item.setTitle("Link").setIcon("link")
+          .onClick(() => this.editorView && insertLinkSkeleton(this.editorView))
+      );
+      menu.addSeparator();
+      menu.addItem((item) =>
+        item.setTitle("Cut").setIcon("scissors")
+          .onClick(() => document.execCommand("cut"))
+      );
+      menu.addItem((item) =>
+        item.setTitle("Copy").setIcon("copy")
+          .onClick(() => document.execCommand("copy"))
+      );
+      menu.addItem((item) =>
+        item.setTitle("Paste").setIcon("clipboard-paste")
+          .onClick(() => document.execCommand("paste"))
+      );
+      menu.showAtMouseEvent(e);
+    });
 
     // Media (directly beneath content)
     const dropZone = body.createDiv({ cls: "kairos-drop-zone" });

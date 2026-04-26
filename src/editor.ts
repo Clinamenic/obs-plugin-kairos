@@ -48,7 +48,14 @@ const obsidianTheme = EditorView.theme({
   ".cm-link": { color: "var(--text-accent)", textDecoration: "underline" },
   ".cm-url": { color: "var(--text-muted)" },
   ".cm-heading": { fontWeight: "bold", color: "var(--text-normal)" },
-  ".cm-quote": { color: "var(--text-muted)", fontStyle: "italic" },
+  ".cm-header-1": { fontSize: "var(--h1-size)", lineHeight: "var(--h1-line-height)", fontWeight: "var(--h1-weight)" },
+  ".cm-header-2": { fontSize: "var(--h2-size)", lineHeight: "var(--h2-line-height)", fontWeight: "var(--h2-weight)" },
+  ".cm-header-3": { fontSize: "var(--h3-size)", lineHeight: "var(--h3-line-height)", fontWeight: "var(--h3-weight)" },
+  ".cm-header-4": { fontSize: "var(--h4-size)", lineHeight: "var(--h4-line-height)", fontWeight: "var(--h4-weight)" },
+  ".cm-header-5": { fontSize: "var(--h5-size)", lineHeight: "var(--h5-line-height)", fontWeight: "var(--h5-weight)" },
+  ".cm-header-6": { fontSize: "var(--h6-size)", lineHeight: "var(--h6-line-height)", fontWeight: "var(--h6-weight)" },
+  ".cm-quote": { color: "var(--blockquote-color)", fontStyle: "italic", borderLeft: "2px solid var(--blockquote-border-color)", paddingLeft: "var(--size-4-3)", marginLeft: "0" },
+  ".cm-hr": { color: "var(--text-faint)", textAlign: "center" },
   // Autocomplete popup
   ".cm-tooltip.cm-tooltip-autocomplete": {
     background: "var(--background-primary)",
