@@ -14,15 +14,15 @@ import { createEditor, wrapSelection, insertLinkSkeleton } from "./editor";
 import type { EditorView } from "@codemirror/view";
 
 const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
-const DAY_NAMES_LONG = [
-  "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+const DAY_NAMES = [
+  "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
 ];
 
 function formatHeaderDate(date: Date): string {
-  return `${DAY_NAMES_LONG[date.getDay()]} ${date.getDate()} ${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;
+  return `${DAY_NAMES[date.getDay()]} ${date.getDate()} ${MONTH_NAMES[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 function parseWikilinks(values: unknown): string[] {
@@ -133,18 +133,13 @@ export class JournalModal extends Modal {
       attr: { "aria-label": "Go to today" },
     });
 
-    // Calendar button — icon-only button that opens a hidden date input
-    const calWrap = left.createDiv({ cls: "kairos-cal-btn-wrap" });
-    const calBtn = calWrap.createEl("button", {
+    // Calendar icon button
+    const calBtn = left.createEl("button", {
       cls: "kairos-header-btn",
       attr: { "aria-label": "Jump to date", type: "button" },
     });
     calBtn.innerHTML =
       '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
-    const datePicker = calWrap.createEl("input", {
-      cls: "kairos-date-picker",
-      attr: { type: "date", "aria-label": "Jump to date", tabindex: "-1" },
-    }) as HTMLInputElement;
 
     // Centre: prev / date / next
     const centre = header.createDiv({ cls: "kairos-header-center" });
@@ -175,19 +170,6 @@ export class JournalModal extends Modal {
 
     prevBtn.addEventListener("click", () => this.navigateDay(-1));
     nextBtn.addEventListener("click", () => this.navigateDay(1));
-    calBtn.addEventListener("click", () => {
-      try {
-        datePicker.showPicker();
-      } catch {
-        datePicker.click();
-      }
-    });
-    datePicker.addEventListener("change", () => {
-      if (datePicker.value) {
-        const [y, m, d] = datePicker.value.split("-").map(Number);
-        this.navigateTo(new Date(y, m - 1, d));
-      }
-    });
     todayBtn.addEventListener("click", () => this.navigateTo(new Date()));
     closeBtn.addEventListener("click", () => this.close());
 

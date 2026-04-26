@@ -103,18 +103,7 @@
   opacity: 0.85;
 }
 
-/* Calendar button wrapper — positions the hidden date input behind the button */
-.kairos-cal-btn-wrap {
-  position: relative;
-}
-
-.kairos-date-picker {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-  width: 100%;
-}
+/* Calendar input wrapper */
 
 /* -------------------------------------------------------------------------
  * Body / fields
@@ -183,7 +172,7 @@
 /* Editor content area (scrollable, height-capped) */
 
 .kairos-editor-content {
-  max-height: 300px;
+  height: 300px;
   overflow-y: auto;
 }
 
