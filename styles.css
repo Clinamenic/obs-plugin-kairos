@@ -19,7 +19,6 @@
 .kairos-modal .modal-header {
   flex-shrink: 0;
   margin-bottom: 0;
-  position: relative;
   padding: var(--size-4-3) var(--size-4-4);
   border-bottom: 1px solid var(--background-modifier-border);
   background: var(--background-secondary);
@@ -104,20 +103,20 @@
   opacity: 0.85;
 }
 
-/* Hidden native date input: not inside .kairos-header-left so the browser does not show a second calendar in the bar */
+/* Native date input appended to body for showPicker; fully off-screen and non-interactive */
 .kairos-header-date-input {
   border: 0;
   box-sizing: border-box;
   clip: rect(0 0 0 0);
   height: 1px;
-  left: 0;
+  left: -10000px;
   margin: 0;
   max-height: 0;
   max-width: 0;
   opacity: 0;
   overflow: hidden;
   padding: 0;
-  position: absolute;
+  position: fixed;
   top: 0;
   width: 1px;
 }

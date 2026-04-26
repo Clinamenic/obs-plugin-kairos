@@ -86,6 +86,8 @@ export class JournalModal extends Modal {
   private extraFieldContainers: Record<string, HTMLElement> = {};
   private extraListValues: Record<string, string[]> = {};
   private mediaGrid!: HTMLElement;
+  /** Native date input for showPicker; mounted on document.body so it never affects modal header layout */
+  private datePickerInput: HTMLInputElement | null = null;
 
   constructor(app: App, plugin: KairosPlugin, date?: Date) {
     super(app);
@@ -110,8 +112,10 @@ export class JournalModal extends Modal {
     }
     // Remove the nav bar we injected into Obsidian's modal-header
     this.titleEl.parentElement
-      ?.querySelectorAll(".kairos-header, .kairos-header-date-input")
+      ?.querySelectorAll(".kairos-header")
       .forEach((el) => el.remove());
+    this.datePickerInput?.remove();
+    this.datePickerInput = null;
     this.contentEl.empty();
   }
 
@@ -125,9 +129,9 @@ export class JournalModal extends Modal {
     // scrollable .modal-content), so stickiness comes for free from the DOM
     // structure rather than CSS tricks.
     const modalHeader = this.titleEl.parentElement!;
-    modalHeader
-      .querySelectorAll(".kairos-header, .kairos-header-date-input")
-      .forEach((el) => el.remove());
+    this.datePickerInput?.remove();
+    this.datePickerInput = null;
+    modalHeader.querySelectorAll(".kairos-header").forEach((el) => el.remove());
     const header = modalHeader.createDiv({ cls: "kairos-header" });
 
     // Left: Today / calendar
@@ -178,11 +182,14 @@ export class JournalModal extends Modal {
     nextBtn.addEventListener("click", () => this.navigateDay(1));
     todayBtn.addEventListener("click", () => this.navigateTo(new Date()));
 
-    // Native date input lives under .modal-header, outside .kairos-header flex row, so the field does not look like a second calendar button
-    const dateInput = modalHeader.createEl("input", {
-      cls: "kairos-header-date-input",
-      attr: { type: "date", "aria-label": "Choose journal date", tabIndex: -1 },
-    });
+    // Native date input on document.body so it cannot affect .modal-header spacing; showPicker still works
+    const dateInput = document.createElement("input");
+    dateInput.type = "date";
+    dateInput.className = "kairos-header-date-input";
+    dateInput.tabIndex = -1;
+    dateInput.setAttribute("aria-hidden", "true");
+    document.body.appendChild(dateInput);
+    this.datePickerInput = dateInput;
     calBtn.addEventListener("click", (evt: Event) => {
       evt.preventDefault();
       (dateInput as HTMLInputElement).value = dateToIso(this.currentDate);
