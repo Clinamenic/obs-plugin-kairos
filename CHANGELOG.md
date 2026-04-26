@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.2 - 2026-04-25
+
+Commit: b8201c8 (2026-04-25T20:16:07-07:00)
+
+### Changed
+
+- style(ui): remove top and side padding from modal body (bottom padding retained)
+- feat(ui): locations field converted to pill/chip UI (matching people and films fields)
+- feat(ui): all custom fields with type "list" now render as pills; applies to any future list fields added in settings
+
 ## 0.2.1 - 2026-04-25
 
 Commit: 649e5af (2026-04-25T19:47:23-07:00)
