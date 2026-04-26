@@ -273,13 +273,7 @@ export class JournalModal extends Modal {
       }
     }
 
-    // Footer
-    const footer = contentEl.createDiv({ cls: "kairos-footer" });
-    const closeBtn = footer.createEl("button", {
-      cls: "kairos-close-btn",
-      text: "Close",
-    });
-    closeBtn.addEventListener("click", () => this.close());
+    // No footer — click outside the modal to close
   }
 
   // -------------------------------------------------------------------------

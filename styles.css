@@ -42,21 +42,22 @@
 
 .kairos-nav-btn,
 .kairos-today-btn {
-  background: none;
-  border: 1px solid var(--background-modifier-border);
-  border-radius: var(--radius-s);
-  color: var(--text-muted);
+  background: var(--interactive-accent);
+  border: none;
+  border-radius: 100px;
+  color: var(--text-on-accent);
   cursor: pointer;
   font-size: var(--font-ui-small);
-  padding: 2px var(--size-4-2);
-  line-height: 1.4;
-  transition: color 80ms, border-color 80ms;
+  padding: 0 var(--size-4-2);
+  height: 26px;
+  line-height: 1;
+  white-space: nowrap;
+  transition: opacity 80ms;
 }
 
 .kairos-nav-btn:hover,
 .kairos-today-btn:hover {
-  color: var(--text-normal);
-  border-color: var(--text-muted);
+  opacity: 0.85;
 }
 
 .kairos-date-picker {
@@ -65,7 +66,8 @@
   background: var(--background-primary);
   color: var(--text-normal);
   font-size: var(--font-ui-small);
-  padding: 2px var(--size-4-2);
+  padding: 0 var(--size-4-2);
+  height: 26px;
   cursor: pointer;
 }
 
@@ -158,6 +160,7 @@
   flex-wrap: wrap;
   gap: var(--size-4-1);
   min-height: 0;
+  padding: var(--size-4-2) var(--size-4-2) var(--size-4-1);
 }
 
 .kairos-chip {
@@ -321,34 +324,6 @@
 
 .kairos-media-remove:hover {
   color: var(--text-error);
-}
-
-/* -------------------------------------------------------------------------
- * Footer
- * ------------------------------------------------------------------------- */
-
-.kairos-footer {
-  border-top: 1px solid var(--background-modifier-border);
-  display: flex;
-  justify-content: flex-end;
-  padding: var(--size-4-3) var(--size-4-4);
-  background: var(--background-secondary);
-  flex-shrink: 0;
-}
-
-.kairos-close-btn {
-  background: var(--interactive-normal);
-  border: 1px solid var(--background-modifier-border);
-  border-radius: var(--radius-s);
-  color: var(--text-normal);
-  cursor: pointer;
-  font-size: var(--font-ui-small);
-  padding: var(--size-4-1) var(--size-4-4);
-  transition: background 80ms;
-}
-
-.kairos-close-btn:hover {
-  background: var(--interactive-hover);
 }
 
 /* -------------------------------------------------------------------------
