@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1 - 2026-04-25
+
+Commit: 649e5af (2026-04-25T19:47:23-07:00)
+
+### Added
+
+- feat(editor): formatting toolbar above the CM6 editor with B / I / [ ] / ` buttons (mousedown keeps focus in editor; tooltips show keyboard shortcuts)
+- feat(editor): editor content area capped at 300px height with overflow scroll
+
 ## 0.2.0 - 2026-04-25
 
 Commit: a451fe7 (2026-04-25T19:33:19-07:00)
