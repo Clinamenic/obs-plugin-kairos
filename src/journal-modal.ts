@@ -183,7 +183,6 @@ export class JournalModal extends Modal {
     const body = contentEl.createDiv({ cls: "kairos-body" });
 
     // Content
-    body.createEl("label", { cls: "kairos-field-label", text: "Content" });
     const editorWrap = body.createDiv({ cls: "kairos-editor-wrap" });
 
     // Toolbar
@@ -216,12 +215,10 @@ export class JournalModal extends Modal {
     );
 
     // Media (directly beneath content)
-    body.createEl("label", { cls: "kairos-field-label", text: "Media" });
     const dropZone = body.createDiv({ cls: "kairos-drop-zone" });
-    dropZone.createEl("span", {
-      cls: "kairos-drop-hint",
-      text: "Drop photos or videos here",
-    });
+    const dropHint = dropZone.createDiv({ cls: "kairos-drop-hint" });
+    dropHint.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
     this.mediaGrid = dropZone.createDiv({ cls: "kairos-media-grid" });
 
     dropZone.addEventListener("dragover", (e: DragEvent) => {
@@ -241,8 +238,9 @@ export class JournalModal extends Modal {
     });
 
     // People
-    body.createEl("label", { cls: "kairos-field-label", text: "People" });
-    const peopleWrapper = body.createDiv({ cls: "kairos-chip-field" });
+    const peopleRow = body.createDiv({ cls: "kairos-field-row" });
+    peopleRow.createEl("label", { cls: "kairos-field-label", text: "People" });
+    const peopleWrapper = peopleRow.createDiv({ cls: "kairos-chip-field" });
     const peopleInputRow = peopleWrapper.createDiv({
       cls: "kairos-chip-input-row",
     });
@@ -277,11 +275,9 @@ export class JournalModal extends Modal {
     );
 
     // Films watched
-    body.createEl("label", {
-      cls: "kairos-field-label",
-      text: "Films watched",
-    });
-    const filmsWrapper = body.createDiv({ cls: "kairos-chip-field" });
+    const filmsRow = body.createDiv({ cls: "kairos-field-row" });
+    filmsRow.createEl("label", { cls: "kairos-field-label", text: "Films watched" });
+    const filmsWrapper = filmsRow.createDiv({ cls: "kairos-chip-field" });
     const filmsInputRow = filmsWrapper.createDiv({
       cls: "kairos-chip-input-row",
     });
@@ -321,8 +317,9 @@ export class JournalModal extends Modal {
     );
 
     // Locations
-    body.createEl("label", { cls: "kairos-field-label", text: "Locations" });
-    const locationsWrapper = body.createDiv({ cls: "kairos-chip-field" });
+    const locationsRow = body.createDiv({ cls: "kairos-field-row" });
+    locationsRow.createEl("label", { cls: "kairos-field-label", text: "Locations" });
+    const locationsWrapper = locationsRow.createDiv({ cls: "kairos-chip-field" });
     const locationsInputRow = locationsWrapper.createDiv({
       cls: "kairos-chip-input-row",
     });
@@ -366,12 +363,13 @@ export class JournalModal extends Modal {
     if (extraFields.length > 0) {
       body.createEl("div", { cls: "kairos-divider" });
       for (const field of extraFields) {
-        body.createEl("label", {
+        const fieldRow = body.createDiv({ cls: "kairos-field-row" });
+        fieldRow.createEl("label", {
           cls: "kairos-field-label",
           text: field.label || field.key,
         });
         if (field.type === "list") {
-          const fieldWrapper = body.createDiv({ cls: "kairos-chip-field" });
+          const fieldWrapper = fieldRow.createDiv({ cls: "kairos-chip-field" });
           const fieldInputRow = fieldWrapper.createDiv({
             cls: "kairos-chip-input-row",
           });
@@ -401,7 +399,7 @@ export class JournalModal extends Modal {
           document.addEventListener(
             "click",
             (e: MouseEvent) => {
-              if (!fieldWrapper.contains(e.target as Node)) sugEl.hide();
+              if (!fieldRow.contains(e.target as Node)) sugEl.hide();
             },
             { capture: true }
           );
@@ -410,7 +408,7 @@ export class JournalModal extends Modal {
           this.extraFieldContainers[field.key] = container;
           this.extraListValues[field.key] = [];
         } else {
-          const fieldWrapper = body.createDiv({ cls: "kairos-chip-input-row" });
+          const fieldWrapper = fieldRow.createDiv({ cls: "kairos-chip-input-row" });
           const input = fieldWrapper.createEl("input", {
             cls: "kairos-chip-input",
             attr: { type: "text" },
@@ -426,7 +424,7 @@ export class JournalModal extends Modal {
           document.addEventListener(
             "click",
             (e: MouseEvent) => {
-              if (!fieldWrapper.contains(e.target as Node)) sugEl.hide();
+              if (!fieldRow.contains(e.target as Node)) sugEl.hide();
             },
             { capture: true }
           );

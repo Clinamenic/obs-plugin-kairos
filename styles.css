@@ -116,12 +116,19 @@
   gap: var(--size-4-2);
 }
 
+.kairos-field-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-4-2);
+}
+
 .kairos-field-label {
   font-size: var(--font-ui-small);
   font-weight: 600;
   color: var(--text-muted);
-  display: block;
-  margin-bottom: 2px;
+  width: 120px;
+  flex-shrink: 0;
+  padding-top: 4px;
 }
 
 /* CM6 editor wrapper */
@@ -217,6 +224,8 @@
  * ------------------------------------------------------------------------- */
 
 .kairos-chip-field {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--size-4-1);
@@ -348,7 +357,9 @@
 }
 
 .kairos-drop-hint {
-  font-size: var(--font-ui-small);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--text-muted);
 }
 

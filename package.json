@@ -1,6 +1,6 @@
 {
   "name": "kairos",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
   "main": "main.js",
   "scripts": {
