@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.6 - 2026-04-25
+
+Commit: 382cb8f (2026-04-25T20:41:00-07:00)
+
+### Fixed
+
+- fix(ui): removed duplicate kairos-header-left div; Today and calendar now correctly appear as a single left slot
+
 ## 0.2.5 - 2026-04-25
 
 Commit: ea704d5 (2026-04-25T20:35:00-07:00)
