@@ -152,20 +152,48 @@ export class JournalModal extends Modal {
       this.scheduleContentSave()
     );
 
+    // Media (directly beneath content)
+    body.createEl("label", { cls: "kairos-field-label", text: "Media" });
+    const dropZone = body.createDiv({ cls: "kairos-drop-zone" });
+    dropZone.createEl("span", {
+      cls: "kairos-drop-hint",
+      text: "Drop photos or videos here",
+    });
+    this.mediaGrid = dropZone.createDiv({ cls: "kairos-media-grid" });
+
+    dropZone.addEventListener("dragover", (e: DragEvent) => {
+      e.preventDefault();
+      dropZone.addClass("kairos-drop-active");
+    });
+    dropZone.addEventListener("dragleave", () =>
+      dropZone.removeClass("kairos-drop-active")
+    );
+    dropZone.addEventListener("drop", (e: DragEvent) => {
+      e.preventDefault();
+      dropZone.removeClass("kairos-drop-active");
+      const files = e.dataTransfer?.files;
+      if (files) {
+        Array.from(files).forEach((f) => this.handleMediaDrop(f));
+      }
+    });
+
     // People
     body.createEl("label", { cls: "kairos-field-label", text: "People" });
     const peopleWrapper = body.createDiv({ cls: "kairos-chip-field" });
-    this.peopleContainer = peopleWrapper.createDiv({
-      cls: "kairos-chip-container",
+    const peopleInputRow = peopleWrapper.createDiv({
+      cls: "kairos-chip-input-row",
     });
-    this.peopleInput = peopleWrapper.createEl("input", {
+    this.peopleInput = peopleInputRow.createEl("input", {
       cls: "kairos-chip-input",
       attr: { type: "text", placeholder: "Search contacts..." },
     });
-    this.peopleSuggestions = peopleWrapper.createDiv({
+    this.peopleSuggestions = peopleInputRow.createDiv({
       cls: "kairos-suggestions",
     });
     this.peopleSuggestions.hide();
+    this.peopleContainer = peopleWrapper.createDiv({
+      cls: "kairos-chip-container",
+    });
     this.peopleInput.addEventListener("input", () =>
       this.updatePeopleSuggestions()
     );
@@ -191,15 +219,18 @@ export class JournalModal extends Modal {
       text: "Films watched",
     });
     const filmsWrapper = body.createDiv({ cls: "kairos-chip-field" });
-    this.filmsContainer = filmsWrapper.createDiv({
-      cls: "kairos-chip-container",
+    const filmsInputRow = filmsWrapper.createDiv({
+      cls: "kairos-chip-input-row",
     });
-    this.filmsInput = filmsWrapper.createEl("input", {
+    this.filmsInput = filmsInputRow.createEl("input", {
       cls: "kairos-chip-input",
       attr: {
         type: "text",
         placeholder: "Add a film and press Enter...",
       },
+    });
+    this.filmsContainer = filmsWrapper.createDiv({
+      cls: "kairos-chip-container",
     });
     this.filmsInput.addEventListener("keydown", (e: KeyboardEvent) => {
       if ((e.key === "Enter" || e.key === ",") && this.filmsInput.value.trim()) {
@@ -241,31 +272,6 @@ export class JournalModal extends Modal {
         this.extraFieldEls[field.key] = input;
       }
     }
-
-    // Media
-    body.createEl("label", { cls: "kairos-field-label", text: "Media" });
-    const dropZone = body.createDiv({ cls: "kairos-drop-zone" });
-    dropZone.createEl("span", {
-      cls: "kairos-drop-hint",
-      text: "Drop photos or videos here",
-    });
-    this.mediaGrid = dropZone.createDiv({ cls: "kairos-media-grid" });
-
-    dropZone.addEventListener("dragover", (e: DragEvent) => {
-      e.preventDefault();
-      dropZone.addClass("kairos-drop-active");
-    });
-    dropZone.addEventListener("dragleave", () =>
-      dropZone.removeClass("kairos-drop-active")
-    );
-    dropZone.addEventListener("drop", (e: DragEvent) => {
-      e.preventDefault();
-      dropZone.removeClass("kairos-drop-active");
-      const files = e.dataTransfer?.files;
-      if (files) {
-        Array.from(files).forEach((f) => this.handleMediaDrop(f));
-      }
-    });
 
     // Footer
     const footer = contentEl.createDiv({ cls: "kairos-footer" });
