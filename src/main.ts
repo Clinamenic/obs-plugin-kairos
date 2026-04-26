@@ -1,15 +1,17 @@
-import { Plugin } from "obsidian";
+import { Plugin, addIcon } from "obsidian";
 import { DEFAULT_SETTINGS, KairosSettingTab } from "./settings";
 import { JournalModal } from "./journal-modal";
 import type { KairosSettings } from "./types";
 
-// Circle with an inscribed + and a short horizontal tangent line at the top.
-const RIBBON_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <line x1="6" y1="3" x2="18" y2="3"/>
-  <circle cx="12" cy="13" r="8"/>
-  <line x1="12" y1="9" x2="12" y2="17"/>
-  <line x1="8" y1="13" x2="16" y2="13"/>
-</svg>`;
+// Inner SVG content only (no outer <svg> tag) — Obsidian wraps this itself.
+// Shape: circle with inscribed + and a short horizontal tangent line at the top.
+const KAIROS_ICON_ID = "kairos-journal";
+const KAIROS_ICON_SVG = `
+  <line x1="4" y1="2" x2="20" y2="2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="12" cy="13" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
+  <line x1="12" y1="8" x2="12" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <line x1="7" y1="13" x2="17" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+`;
 
 export default class KairosPlugin extends Plugin {
   settings: KairosSettings = DEFAULT_SETTINGS;
@@ -17,9 +19,11 @@ export default class KairosPlugin extends Plugin {
   async onload(): Promise<void> {
     await this.loadSettings();
 
+    addIcon(KAIROS_ICON_ID, KAIROS_ICON_SVG);
+
     this.addRibbonIcon(
-      RIBBON_ICON_SVG,
-      "Open journal entry",
+      KAIROS_ICON_ID,
+      "New journal entry",
       () => new JournalModal(this.app, this).open()
     );
 
