@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.12 - 2026-04-26
+
+Commit: bf2e4e5 (2026-04-26T08:57:46-07:00)
+
+### Changed
+
+- style(ui): journal header control pills use `--background-modifier-form-field` and `--text-normal` with a neutral border, matching the editor surface; hover uses `--background-secondary` (modal header surface)
+
 ## 0.3.11 - 2026-04-26
 
 Commit: c84ddf0 (2026-04-26T08:53:29-07:00)
