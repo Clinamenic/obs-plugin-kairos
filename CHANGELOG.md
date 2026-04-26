@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.8 - 2026-04-26
+
+Commit: fd1c95c (2026-04-26T08:36:59-07:00)
+
+### Fixed
+
+- fix(ui): native date input moved under `modal-header` (outside the flex bar) and cleaned up on close so a second inline calendar control no longer appears beside the calendar icon
+
 ## 0.3.7 - 2026-04-26
 
 Commit: c9870f6 (2026-04-26T08:34:17-07:00)
