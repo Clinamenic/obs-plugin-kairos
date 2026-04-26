@@ -111,6 +111,11 @@ export class JournalModal extends Modal {
       attr: { "aria-label": "Previous day" },
     });
 
+    const todayBtn = header.createEl("button", {
+      cls: "kairos-today-btn",
+      text: "Today",
+    });
+
     this.headerDateEl = header.createEl("span", { cls: "kairos-header-date" });
 
     const nextBtn = header.createEl("button", {
@@ -123,11 +128,6 @@ export class JournalModal extends Modal {
       cls: "kairos-date-picker",
       attr: { type: "date", "aria-label": "Jump to date" },
     }) as HTMLInputElement;
-
-    const todayBtn = header.createEl("button", {
-      cls: "kairos-today-btn",
-      text: "Today",
-    });
 
     prevBtn.addEventListener("click", () => this.navigateDay(-1));
     nextBtn.addEventListener("click", () => this.navigateDay(1));

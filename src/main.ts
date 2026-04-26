@@ -3,14 +3,14 @@ import { DEFAULT_SETTINGS, KairosSettingTab } from "./settings";
 import { JournalModal } from "./journal-modal";
 import type { KairosSettings } from "./types";
 
-// Inner SVG content only (no outer <svg> tag) — Obsidian wraps this itself.
+// Inner SVG content for Obsidian's addIcon — coordinate space is 0 0 100 100.
 // Shape: circle with inscribed + and a short horizontal tangent line at the top.
 const KAIROS_ICON_ID = "kairos-journal";
 const KAIROS_ICON_SVG = `
-  <line x1="4" y1="2" x2="20" y2="2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  <circle cx="12" cy="13" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
-  <line x1="12" y1="8" x2="12" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  <line x1="7" y1="13" x2="17" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <line x1="18" y1="18" x2="82" y2="18" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="50" cy="60" r="34" stroke="currentColor" stroke-width="8" fill="none"/>
+  <line x1="50" y1="36" x2="50" y2="84" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+  <line x1="26" y1="60" x2="74" y2="60" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
 `;
 
 export default class KairosPlugin extends Plugin {
