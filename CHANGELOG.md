@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.5 - 2026-04-25
+
+Commit: ea704d5 (2026-04-25T20:35:00-07:00)
+
+### Fixed
+
+- fix(ui): Today and calendar buttons moved to far left of header; close button remains at far right
+
 ## 0.2.4 - 2026-04-25
 
 Commit: b4aaf4f (2026-04-25T20:29:31-07:00)
