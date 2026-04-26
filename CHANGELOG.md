@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.6 - 2026-04-26
+
+Commit: 6d345e7
+
+### Added
+
+- feat(ui): autosuggest for films-watched field (from existing journal entries, starts-with priority)
+- feat(ui): autosuggest for locations field (from existing journal entries)
+- feat(ui): autosuggest for all extra fields (from existing journal entries)
+- feat(ui): sticky modal header — nav bar stays fixed while body scrolls (max-height 85vh)
+
 ## 0.1.5 - 2026-04-26
 
 Commit: 3458772
