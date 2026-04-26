@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.6 - 2026-04-26
+
+Commit: c8d8af5 (2026-04-26T08:26:41-07:00)
+
+### Added
+
+- feat(ui): video attachments in the media strip use a 64px tile with the app “video” icon (via `setIcon`) instead of a filename-only label; common video extensions are detected
+
+### Changed
+
+- style(ui): media tile row is horizontally scrollable (`kairos-media-row-scroll`); no wrapping; first-child upload uses `--background-secondary`
+- style(ui): media drop zone uses equal padding on all sides; remove (X) on thumbnails shows on hover or focus, inset inside the tile; attachment tiles use a matching border radius
+
 ## 0.3.5 - 2026-04-26
 
 Commit: 48a2123 (2026-04-26T08:17:35-07:00)
