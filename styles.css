@@ -9,12 +9,15 @@
 
 .kairos-modal {
   width: min(680px, 95vw);
+  max-height: 85vh;
 }
 
 .kairos-modal .modal-content {
   padding: 0;
   display: flex;
   flex-direction: column;
+  max-height: 85vh;
+  overflow: hidden;
 }
 
 /* -------------------------------------------------------------------------

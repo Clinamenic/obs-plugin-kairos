@@ -9,6 +9,7 @@ import {
   buildMediaFolder,
 } from "./journal-service";
 import { searchContacts } from "./contact-search";
+import { searchFieldValues } from "./field-search";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -70,8 +71,11 @@ export class JournalModal extends Modal {
   private peopleSuggestions!: HTMLElement;
   private filmsContainer!: HTMLElement;
   private filmsInput!: HTMLInputElement;
+  private filmsSuggestions!: HTMLElement;
   private locationsInput!: HTMLInputElement;
+  private locationsSuggestions!: HTMLElement;
   private extraFieldEls: Record<string, HTMLInputElement> = {};
+  private extraFieldSuggestions: Record<string, HTMLElement> = {};
   private mediaGrid!: HTMLElement;
 
   constructor(app: App, plugin: KairosPlugin, date?: Date) {
@@ -229,6 +233,10 @@ export class JournalModal extends Modal {
         placeholder: "Add a film and press Enter...",
       },
     });
+    this.filmsSuggestions = filmsInputRow.createDiv({
+      cls: "kairos-suggestions",
+    });
+    this.filmsSuggestions.hide();
     this.filmsContainer = filmsWrapper.createDiv({
       cls: "kairos-chip-container",
     });
@@ -237,20 +245,48 @@ export class JournalModal extends Modal {
         e.preventDefault();
         this.addFilm(this.filmsInput.value.trim().replace(/,$/, ""));
         this.filmsInput.value = "";
+        this.filmsSuggestions.hide();
       }
     });
+    this.filmsInput.addEventListener("input", () =>
+      this.updateFilmsSuggestions()
+    );
+    document.addEventListener(
+      "click",
+      (e: MouseEvent) => {
+        if (!filmsWrapper.contains(e.target as Node)) {
+          this.filmsSuggestions.hide();
+        }
+      },
+      { capture: true }
+    );
 
     // Locations
     body.createEl("label", { cls: "kairos-field-label", text: "Locations" });
-    this.locationsInput = body.createEl("input", {
-      cls: "kairos-text-input",
+    const locationsWrapper = body.createDiv({ cls: "kairos-chip-input-row" });
+    this.locationsInput = locationsWrapper.createEl("input", {
+      cls: "kairos-chip-input",
       attr: {
         type: "text",
         placeholder: "e.g. US, CA, San Francisco",
       },
     }) as HTMLInputElement;
-    this.locationsInput.addEventListener("change", () =>
-      this.saveLocations()
+    this.locationsSuggestions = locationsWrapper.createDiv({
+      cls: "kairos-suggestions",
+    });
+    this.locationsSuggestions.hide();
+    this.locationsInput.addEventListener("change", () => this.saveLocations());
+    this.locationsInput.addEventListener("input", () =>
+      this.updateLocationsSuggestions()
+    );
+    document.addEventListener(
+      "click",
+      (e: MouseEvent) => {
+        if (!locationsWrapper.contains(e.target as Node)) {
+          this.locationsSuggestions.hide();
+        }
+      },
+      { capture: true }
     );
 
     // Extra fields
@@ -262,14 +298,28 @@ export class JournalModal extends Modal {
           cls: "kairos-field-label",
           text: field.label || field.key,
         });
-        const input = body.createEl("input", {
-          cls: "kairos-text-input",
+        const fieldWrapper = body.createDiv({ cls: "kairos-chip-input-row" });
+        const input = fieldWrapper.createEl("input", {
+          cls: "kairos-chip-input",
           attr: { type: "text" },
         }) as HTMLInputElement;
+        const sugEl = fieldWrapper.createDiv({ cls: "kairos-suggestions" });
+        sugEl.hide();
         input.addEventListener("change", () =>
           this.saveExtraField(field, input.value)
         );
+        input.addEventListener("input", () =>
+          this.updateExtraFieldSuggestions(field, input, sugEl)
+        );
+        document.addEventListener(
+          "click",
+          (e: MouseEvent) => {
+            if (!fieldWrapper.contains(e.target as Node)) sugEl.hide();
+          },
+          { capture: true }
+        );
         this.extraFieldEls[field.key] = input;
+        this.extraFieldSuggestions[field.key] = sugEl;
       }
     }
 
@@ -511,6 +561,18 @@ export class JournalModal extends Modal {
     );
   }
 
+  private updateFilmsSuggestions(): void {
+    const q = this.filmsInput.value.trim();
+    const results = searchFieldValues(
+      this.app, "films-watched", q, "journal-entry"
+    ).filter((v) => !this.films.includes(v));
+    this.renderSuggestions(this.filmsSuggestions, results, (value) => {
+      this.addFilm(value);
+      this.filmsInput.value = "";
+      this.filmsSuggestions.hide();
+    });
+  }
+
   // -------------------------------------------------------------------------
   // Locations
   // -------------------------------------------------------------------------
@@ -528,6 +590,16 @@ export class JournalModal extends Modal {
         fm["locations"] = this.locations.length ? this.locations : null;
       }
     );
+  }
+
+  private updateLocationsSuggestions(): void {
+    const q = this.locationsInput.value.trim();
+    const results = searchFieldValues(this.app, "locations", q, "journal-entry");
+    this.renderSuggestions(this.locationsSuggestions, results, (value) => {
+      this.locationsInput.value = value;
+      this.locationsSuggestions.hide();
+      this.saveLocations();
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -553,6 +625,47 @@ export class JournalModal extends Modal {
           (Array.isArray(value) ? value.length : value) ? value : null;
       }
     );
+  }
+
+  private updateExtraFieldSuggestions(
+    field: ExtraField,
+    input: HTMLInputElement,
+    sugEl: HTMLElement
+  ): void {
+    const q = input.value.trim();
+    const results = searchFieldValues(this.app, field.key, q, "journal-entry");
+    this.renderSuggestions(sugEl, results, (value) => {
+      input.value = value;
+      sugEl.hide();
+      this.saveExtraField(field, value);
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // Shared suggestion renderer
+  // -------------------------------------------------------------------------
+
+  private renderSuggestions(
+    container: HTMLElement,
+    items: string[],
+    onSelect: (value: string) => void
+  ): void {
+    container.empty();
+    if (items.length === 0) {
+      container.hide();
+      return;
+    }
+    for (const item of items) {
+      const el = container.createDiv({
+        cls: "kairos-suggestion-item",
+        text: item,
+      });
+      el.addEventListener("mousedown", (e: MouseEvent) => {
+        e.preventDefault();
+        onSelect(item);
+      });
+    }
+    container.show();
   }
 
   // -------------------------------------------------------------------------
