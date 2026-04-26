@@ -80,32 +80,56 @@
   text-align: center;
 }
 
-/* Unified header button style */
-.kairos-header-btn {
-  display: inline-flex;
+/* Header pills: one style for <button> and <label> (calendar); no theme drop shadow */
+.kairos-modal .kairos-header .kairos-header-btn {
   align-items: center;
-  justify-content: center;
+  appearance: none;
+  -webkit-appearance: none;
   background: var(--interactive-accent);
   border: none;
   border-radius: 100px;
+  box-shadow: none;
   color: var(--text-on-accent);
   cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
   font-size: var(--font-ui-small);
-  padding: 0 var(--size-4-2);
   height: 26px;
-  min-width: 26px;
+  justify-content: center;
   line-height: 1;
-  white-space: nowrap;
+  min-width: 26px;
+  padding: 0 var(--size-4-2);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
   transition: opacity 80ms;
+  user-select: none;
+  white-space: nowrap;
 }
 
-.kairos-header-btn:hover {
+.kairos-modal .kairos-header .kairos-header-btn:hover {
   opacity: 0.85;
+}
+
+.kairos-modal .kairos-header .kairos-header-btn:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.kairos-modal .kairos-header .kairos-header-btn:focus-visible {
+  box-shadow: none;
+  outline: 2px solid var(--text-accent);
+  outline-offset: 2px;
 }
 
 /* Calendar: one control. Label matches header buttons; invisible date input covers the icon (user clicks the native field). */
 .kairos-modal .kairos-calendar-label {
   position: relative;
+}
+
+.kairos-modal .kairos-header label.kairos-header-btn:focus-within {
+  box-shadow: none;
+  outline: 2px solid var(--text-accent);
+  outline-offset: 2px;
 }
 
 .kairos-modal .kairos-calendar-icon {
@@ -128,6 +152,7 @@
   margin: 0;
   padding: 0;
   border: 0;
+  box-shadow: none;
   opacity: 0;
   cursor: pointer;
   font-size: var(--font-ui-small);
@@ -137,6 +162,12 @@
   -webkit-appearance: none;
   min-width: 0;
   min-height: 0;
+}
+
+.kairos-modal .kairos-calendar-date-input:focus,
+.kairos-modal .kairos-calendar-date-input:focus-visible {
+  box-shadow: none;
+  outline: none;
 }
 
 /* -------------------------------------------------------------------------
