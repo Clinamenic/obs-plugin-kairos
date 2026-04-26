@@ -28,6 +28,11 @@
   display: none;
 }
 
+/* Hide Obsidian's floating close button — replaced by our in-header close btn */
+.kairos-modal .modal-close-button {
+  display: none;
+}
+
 .kairos-modal .modal-content {
   flex: 1;
   min-height: 0;
@@ -42,21 +47,41 @@
 .kairos-header {
   display: flex;
   align-items: center;
-  gap: var(--size-4-2);
   width: 100%;
 }
 
-.kairos-header-date {
+.kairos-header-left {
   flex: 1;
-  text-align: center;
+}
+
+.kairos-header-center {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+}
+
+.kairos-header-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--size-4-2);
+}
+
+.kairos-header-date {
   font-weight: 600;
   font-size: var(--font-ui-small);
   color: var(--text-normal);
   white-space: nowrap;
+  min-width: 16ch;
+  text-align: center;
 }
 
-.kairos-nav-btn,
-.kairos-today-btn {
+/* Unified header button style */
+.kairos-header-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--interactive-accent);
   border: none;
   border-radius: 100px;
@@ -65,25 +90,27 @@
   font-size: var(--font-ui-small);
   padding: 0 var(--size-4-2);
   height: 26px;
+  min-width: 26px;
   line-height: 1;
   white-space: nowrap;
   transition: opacity 80ms;
 }
 
-.kairos-nav-btn:hover,
-.kairos-today-btn:hover {
+.kairos-header-btn:hover {
   opacity: 0.85;
 }
 
+/* Calendar button wrapper — positions the hidden date input behind the button */
+.kairos-cal-btn-wrap {
+  position: relative;
+}
+
 .kairos-date-picker {
-  border: 1px solid var(--background-modifier-border);
-  border-radius: var(--radius-s);
-  background: var(--background-primary);
-  color: var(--text-normal);
-  font-size: var(--font-ui-small);
-  padding: 0 var(--size-4-2);
-  height: 26px;
-  cursor: pointer;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  width: 100%;
 }
 
 /* -------------------------------------------------------------------------
@@ -91,7 +118,7 @@
  * ------------------------------------------------------------------------- */
 
 .kairos-body {
-  padding: 0 var(--size-4-4);
+  padding: var(--size-4-4);
   display: flex;
   flex-direction: column;
   gap: var(--size-4-2);
