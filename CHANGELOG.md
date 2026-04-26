@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.8 - 2026-04-26
+
+Commit: 6a36979
+
+### Fixed
+
+- fix(ui): nav bar moved into Obsidian's native .modal-header element, which sits permanently above the scrollable .modal-content — sticky header now works without any CSS position tricks; body scrolls freely via Obsidian's built-in modal-content overflow
+
 ## 0.1.7 - 2026-04-26
 
 Commit: e4cb3ad
