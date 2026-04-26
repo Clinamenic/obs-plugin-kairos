@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.9 - 2026-04-26
+
+Commit: a51309e (2026-04-26T08:40:03-07:00)
+
+### Fixed
+
+- fix(ui): hidden `type=date` input is created on `document.body`, tracked on the modal, and removed on close so it no longer affects modal header spacing
+
 ## 0.3.8 - 2026-04-26
 
 Commit: fd1c95c (2026-04-26T08:36:59-07:00)
