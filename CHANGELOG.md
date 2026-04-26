@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.4 - 2026-04-26
+
+Commit: 9c76b52 (2026-04-26T08:09:18-07:00)
+
+### Changed
+
+- style(ui): journal editor surface uses `--background-modifier-form-field` to align with form field rows
+- style(ui): CodeMirror layers (content, scroller, editor) use `--radius-m` so focus rings match the rounded wrapper
+- style(ui): extra space below the editor and media drop zone via bottom margin on each
+
 ## 0.3.3 - 2026-04-26
 
 Commit: b0435cf (2026-04-26T08:00:47-07:00)
