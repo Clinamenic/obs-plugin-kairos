@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.4 - 2026-04-25
+
+Commit: b4aaf4f (2026-04-25T20:29:31-07:00)
+
+### Changed
+
+- feat(ui): modal header restructured into three-slot layout — left spacer / centre nav / right controls
+- feat(ui): prev/date/next navigation centred; Today, calendar, and close buttons grouped at far right
+- feat(ui): date picker replaced with icon-only calendar button (no visible MM/DD/YYYY text)
+- feat(ui): close button moved into header; Obsidian native close button hidden
+- style(ui): all header buttons use unified kairos-header-btn style
+- fix(ui): modal body top padding restored
+
 ## 0.2.3 - 2026-04-25
 
 Commit: 7763498 (2026-04-25T20:20:55-07:00)
