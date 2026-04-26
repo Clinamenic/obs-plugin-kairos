@@ -110,7 +110,7 @@ export class JournalModal extends Modal {
     }
     // Remove the nav bar we injected into Obsidian's modal-header
     this.titleEl.parentElement
-      ?.querySelectorAll(".kairos-header")
+      ?.querySelectorAll(".kairos-header, .kairos-header-date-input")
       .forEach((el) => el.remove());
     this.contentEl.empty();
   }
@@ -125,7 +125,9 @@ export class JournalModal extends Modal {
     // scrollable .modal-content), so stickiness comes for free from the DOM
     // structure rather than CSS tricks.
     const modalHeader = this.titleEl.parentElement!;
-    modalHeader.querySelectorAll(".kairos-header").forEach((el) => el.remove());
+    modalHeader
+      .querySelectorAll(".kairos-header, .kairos-header-date-input")
+      .forEach((el) => el.remove());
     const header = modalHeader.createDiv({ cls: "kairos-header" });
 
     // Left: Today / calendar
@@ -144,11 +146,6 @@ export class JournalModal extends Modal {
     });
     calBtn.innerHTML =
       '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
-
-    const dateInput = left.createEl("input", {
-      cls: "kairos-header-date-input",
-      attr: { type: "date", "aria-label": "Choose journal date" },
-    });
 
     // Centre: prev / date / next
     const centre = header.createDiv({ cls: "kairos-header-center" });
@@ -180,6 +177,12 @@ export class JournalModal extends Modal {
     prevBtn.addEventListener("click", () => this.navigateDay(-1));
     nextBtn.addEventListener("click", () => this.navigateDay(1));
     todayBtn.addEventListener("click", () => this.navigateTo(new Date()));
+
+    // Native date input lives under .modal-header, outside .kairos-header flex row, so the field does not look like a second calendar button
+    const dateInput = modalHeader.createEl("input", {
+      cls: "kairos-header-date-input",
+      attr: { type: "date", "aria-label": "Choose journal date", tabIndex: -1 },
+    });
     calBtn.addEventListener("click", (evt: Event) => {
       evt.preventDefault();
       (dateInput as HTMLInputElement).value = dateToIso(this.currentDate);
