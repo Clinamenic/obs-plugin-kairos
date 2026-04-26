@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.7 - 2026-04-26
+
+Commit: c9870f6 (2026-04-26T08:34:17-07:00)
+
+### Fixed
+
+- fix(ui): header calendar control opens a native `input type=date` picker and jumps the journal to the chosen day (`showPicker` with click fallback; styled hidden input in header)
+
 ## 0.3.6 - 2026-04-26
 
 Commit: c8d8af5 (2026-04-26T08:26:41-07:00)
