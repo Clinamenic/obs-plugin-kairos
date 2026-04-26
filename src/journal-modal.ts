@@ -95,6 +95,10 @@ export class JournalModal extends Modal {
       clearTimeout(this.contentDebounceTimer);
       this.contentDebounceTimer = null;
     }
+    // Remove the nav bar we injected into Obsidian's modal-header
+    this.titleEl.parentElement
+      ?.querySelectorAll(".kairos-header")
+      .forEach((el) => el.remove());
     this.contentEl.empty();
   }
 
@@ -103,11 +107,13 @@ export class JournalModal extends Modal {
   // -------------------------------------------------------------------------
 
   private buildShell(): void {
-    const { contentEl } = this;
-    contentEl.empty();
-
-    // Header
-    const header = contentEl.createDiv({ cls: "kairos-header" });
+    // ── Nav bar ──────────────────────────────────────────────────────────────
+    // Inject into Obsidian's .modal-header (already above and separate from the
+    // scrollable .modal-content), so stickiness comes for free from the DOM
+    // structure rather than CSS tricks.
+    const modalHeader = this.titleEl.parentElement!;
+    modalHeader.querySelectorAll(".kairos-header").forEach((el) => el.remove());
+    const header = modalHeader.createDiv({ cls: "kairos-header" });
 
     const prevBtn = header.createEl("button", {
       cls: "kairos-nav-btn",
@@ -142,6 +148,12 @@ export class JournalModal extends Modal {
       }
     });
     todayBtn.addEventListener("click", () => this.navigateTo(new Date()));
+
+    // ── Body ─────────────────────────────────────────────────────────────────
+    // Goes into contentEl (.modal-content), which Obsidian already makes
+    // scrollable, so no custom overflow CSS needed.
+    const { contentEl } = this;
+    contentEl.empty();
 
     // Body
     const body = contentEl.createDiv({ cls: "kairos-body" });

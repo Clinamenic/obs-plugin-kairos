@@ -9,14 +9,21 @@
 
 .kairos-modal {
   width: min(680px, 95vw);
-  max-height: 85vh;
 }
 
 .kairos-modal .modal-content {
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  max-height: 85vh;
+}
+
+/* Override Obsidian's modal-header to host our nav bar */
+.kairos-modal .modal-header {
+  padding: var(--size-4-3) var(--size-4-4);
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+}
+
+.kairos-modal .modal-title {
+  display: none;
 }
 
 /* -------------------------------------------------------------------------
@@ -27,10 +34,7 @@
   display: flex;
   align-items: center;
   gap: var(--size-4-2);
-  padding: var(--size-4-3) var(--size-4-4);
-  border-bottom: 1px solid var(--background-modifier-border);
-  background: var(--background-secondary);
-  flex-shrink: 0;
+  width: 100%;
 }
 
 .kairos-header-date {
@@ -79,9 +83,6 @@
 
 .kairos-body {
   padding: var(--size-4-4);
-  overflow-y: auto;
-  flex: 1;
-  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: var(--size-4-2);
