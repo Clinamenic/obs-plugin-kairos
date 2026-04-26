@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.9 - 2026-04-26
+
+Commit: a6c45e9 (2026-04-26T06:48:22-07:00)
+
+### Changed
+
+- feat(ui): field labels given fixed 120px width; input area displayed to the right side by side
+- feat(ui): chip containers remain below the input row within the right column
+- feat(ui): Content and Media labels removed
+- feat(ui): drop zone hint replaced with a camera icon
+- feat(ui): clicking the camera icon opens the system file picker (image/video, multi-select)
+
 ## 0.2.7 - 2026-04-25
 
 Commit: c0ed310 (2026-04-25T20:53:00-07:00)
