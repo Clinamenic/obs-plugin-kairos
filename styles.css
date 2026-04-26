@@ -317,7 +317,7 @@
 .kairos-drop-zone {
   border: 2px dashed var(--background-modifier-border);
   border-radius: var(--radius-m);
-  padding: var(--size-4-3) var(--size-4-3) var(--size-4-4) var(--size-4-3);
+  padding: var(--size-4-3);
   text-align: start;
   transition: border-color 120ms, background 120ms;
   min-height: 0;
@@ -334,19 +334,28 @@
   background: var(--background-modifier-hover);
 }
 
-/* Upload tile + attachment thumbs share one row (grid uses display: contents) */
+/* Horizontal scroll; tile row is width: max-content (grid uses display: contents) */
+.kairos-media-row-scroll {
+  margin: 0;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  width: 100%;
+}
+
 .kairos-media-row {
   align-items: flex-start;
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--size-4-2);
-  width: 100%;
+  width: max-content;
 }
 
 .kairos-media-upload-tile {
   align-items: center;
-  background: var(--background-modifier-form-field);
+  background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
   box-sizing: border-box;
@@ -378,7 +387,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex-shrink: 0;
   gap: 4px;
+  border-radius: var(--radius-s);
 }
 
 .kairos-media-thumb {
@@ -388,6 +399,25 @@
   height: 64px;
   object-fit: cover;
   width: 64px;
+}
+
+.kairos-media-video-tile {
+  align-items: center;
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  box-sizing: border-box;
+  color: var(--text-muted);
+  display: flex;
+  flex-shrink: 0;
+  height: 64px;
+  justify-content: center;
+  width: 64px;
+}
+
+.kairos-media-video-tile svg {
+  height: 32px;
+  width: 32px;
 }
 
 .kairos-media-filename {
@@ -408,15 +438,25 @@
   font-size: 0.75em;
   height: 16px;
   line-height: 1;
+  opacity: 0;
   padding: 0;
+  pointer-events: none;
   position: absolute;
-  right: -6px;
-  top: -6px;
+  right: var(--size-4-1);
+  top: var(--size-4-1);
+  transition: color 80ms, opacity 80ms;
   width: 16px;
-  transition: color 80ms;
+  z-index: 1;
 }
 
-.kairos-media-remove:hover {
+.kairos-media-item:hover .kairos-media-remove,
+.kairos-media-item:focus-within .kairos-media-remove {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.kairos-media-remove:hover,
+.kairos-media-remove:focus-visible {
   color: var(--text-error);
 }
 

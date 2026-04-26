@@ -1,4 +1,4 @@
-import { App, Menu, Modal, TFile, normalizePath } from "obsidian";
+import { App, Menu, Modal, TFile, normalizePath, setIcon } from "obsidian";
 import type KairosPlugin from "./main";
 import type { ExtraField } from "./types";
 import {
@@ -49,6 +49,10 @@ function toWikilink(basename: string): string {
 function stripWikilink(raw: string): string {
   return raw.replace(/^\[\[/, "").replace(/\]\]$/, "");
 }
+
+const IMAGE_NAME_PATTERN = /\.(jpe?g|png|gif|webp|avif)$/i;
+const VIDEO_NAME_PATTERN =
+  /\.(mp4|m4v|webm|mov|mkv|ogv|avi|wmv|mpeg|mpg|3gp?)(\?.*)?$/i;
 
 export class JournalModal extends Modal {
   private plugin: KairosPlugin;
@@ -231,7 +235,8 @@ export class JournalModal extends Modal {
 
     // Media (directly beneath content)
     const dropZone = body.createDiv({ cls: "kairos-drop-zone" });
-    const mediaRow = dropZone.createDiv({ cls: "kairos-media-row" });
+    const mediaRowScroll = dropZone.createDiv({ cls: "kairos-media-row-scroll" });
+    const mediaRow = mediaRowScroll.createDiv({ cls: "kairos-media-row" });
     const dropHint = mediaRow.createDiv({
       cls: "kairos-media-upload-tile kairos-drop-hint",
       attr: { "aria-label": "Add media", title: "Add media" },
@@ -904,10 +909,15 @@ export class JournalModal extends Modal {
         normalizePath(`${buildMediaFolder(file.path)}/${name}`)
       );
 
-      if (mediaFile && /\.(jpe?g|png|gif|webp|avif)$/i.test(name)) {
+      if (mediaFile && IMAGE_NAME_PATTERN.test(name)) {
         const img = item.createEl("img", { cls: "kairos-media-thumb" });
         img.src = this.app.vault.getResourcePath(mediaFile);
         img.alt = name;
+      } else if (mediaFile && VIDEO_NAME_PATTERN.test(name)) {
+        const videoTile = item.createDiv({ cls: "kairos-media-video-tile" });
+        videoTile.setAttribute("title", name);
+        videoTile.setAttribute("aria-label", `Video: ${name}`);
+        setIcon(videoTile, "video");
       } else {
         item.createEl("span", {
           cls: "kairos-media-filename",
