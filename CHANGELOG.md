@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.5 - 2026-04-26
+
+Commit: 3458772
+
+### Added
+
+- feat(search): autocomplete prioritises starts-with matches before contains matches
+
+### Fixed
+
+- fix(ui): chip container has padding around its edges
+- fix(ui): footer and Close button removed; click outside to dismiss
+- fix(ui): nav buttons use accent colour (pill style) with uniform 26px height matching the date picker
+
 ## 0.1.4 - 2026-04-26
 
 Commit: 0e55610
