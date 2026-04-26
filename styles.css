@@ -137,18 +137,16 @@
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
   transition: border-color 80ms;
-  overflow: hidden;
 }
 
 .kairos-editor-wrap:focus-within {
   border-color: var(--text-accent);
 }
 
-/* Editor content area (scrollable, height-capped) */
+/* Editor content area */
 
 .kairos-editor-content {
   height: 300px;
-  overflow-y: auto;
 }
 
 .kairos-editor-wrap .cm-editor {
@@ -156,7 +154,7 @@
   font-family: var(--font-text);
   font-size: var(--font-text-size);
   line-height: 1.6;
-  min-height: 120px;
+  height: 300px;
   padding: var(--size-4-2) var(--size-4-3);
 }
 
@@ -165,7 +163,8 @@
 }
 
 .kairos-editor-wrap .cm-scroller {
-  overflow: visible;
+  overflow-y: auto;
+  min-height: 120px;
 }
 
 /* Generic text input */
