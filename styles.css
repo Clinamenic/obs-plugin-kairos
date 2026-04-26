@@ -103,7 +103,17 @@
   opacity: 0.85;
 }
 
-/* Calendar input wrapper */
+/* Hidden native date input (opened from calendar button via showPicker) */
+.kairos-header-date-input {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
 
 /* -------------------------------------------------------------------------
  * Body / fields
