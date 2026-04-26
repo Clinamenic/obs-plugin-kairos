@@ -137,7 +137,8 @@
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-m);
   transition: border-color 80ms;
-  margin-bottom: var(--size-4-4);
+  /* With .kairos-body gap: var(--size-4-2), margin + gap = var(--size-4-4) (16px on default grid) */
+  margin-bottom: calc(var(--size-4-4) - var(--size-4-2));
 }
 
 .kairos-editor-wrap:focus-within {
@@ -317,15 +318,10 @@
   border: 2px dashed var(--background-modifier-border);
   border-radius: var(--radius-m);
   padding: var(--size-4-3) var(--size-4-3) var(--size-4-4) var(--size-4-3);
-  text-align: center;
+  text-align: start;
   transition: border-color 120ms, background 120ms;
-  min-height: 72px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--size-4-2);
-  background: var(--background-secondary);
+  min-height: 0;
+  background: var(--background-modifier-form-field);
   margin-bottom: var(--size-4-4);
 }
 
@@ -334,24 +330,47 @@
   background: var(--background-modifier-hover);
 }
 
-.kairos-drop-hint {
+.kairos-drop-zone.kairos-drop-active .kairos-media-upload-tile {
+  background: var(--background-modifier-hover);
+}
+
+/* Upload tile + attachment thumbs share one row (grid uses display: contents) */
+.kairos-media-row {
+  align-items: flex-start;
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--size-4-2);
+  width: 100%;
+}
+
+.kairos-media-upload-tile {
   align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
+  background: var(--background-modifier-form-field);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  box-sizing: border-box;
   cursor: pointer;
-  transition: color 80ms;
+  display: flex;
+  flex-shrink: 0;
+  height: 64px;
+  justify-content: center;
+  transition: color 80ms, border-color 80ms, background 80ms;
+  width: 64px;
+}
+
+.kairos-drop-hint {
+  color: var(--text-muted);
 }
 
 .kairos-drop-hint:hover {
+  background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
+/* Children flex with .kairos-media-row; this wrapper adds no box */
 .kairos-media-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--size-4-2);
-  justify-content: center;
+  display: contents;
 }
 
 .kairos-media-item {
@@ -363,11 +382,12 @@
 }
 
 .kairos-media-thumb {
+  border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
+  box-sizing: border-box;
   height: 64px;
   object-fit: cover;
   width: 64px;
-  border: 1px solid var(--background-modifier-border);
 }
 
 .kairos-media-filename {
