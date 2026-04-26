@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.7 - 2026-04-26
+
+Commit: e4cb3ad
+
+### Fixed
+
+- fix(ui): sticky header now works correctly — body scrolls while header stays fixed
+  - removed `overflow: hidden` from modal-content (was squishing content)
+  - added `min-height: 0` to body (required for flex children to scroll rather than overflow)
+
 ## 0.1.6 - 2026-04-26
 
 Commit: 6d345e7
