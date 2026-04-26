@@ -144,17 +144,17 @@ export class JournalModal extends Modal {
       attr: { "aria-label": "Next day" },
     });
 
-    // Right: Today / calendar / close
-    const right = header.createDiv({ cls: "kairos-header-right" });
+    // Left: Today / calendar
+    const left = header.createDiv({ cls: "kairos-header-left" });
 
-    const todayBtn = right.createEl("button", {
+    const todayBtn = left.createEl("button", {
       cls: "kairos-header-btn",
       text: "Today",
       attr: { "aria-label": "Go to today" },
     });
 
     // Calendar button — icon-only button that opens a hidden date input
-    const calWrap = right.createDiv({ cls: "kairos-cal-btn-wrap" });
+    const calWrap = left.createDiv({ cls: "kairos-cal-btn-wrap" });
     const calBtn = calWrap.createEl("button", {
       cls: "kairos-header-btn",
       attr: { "aria-label": "Jump to date", type: "button" },
@@ -165,6 +165,9 @@ export class JournalModal extends Modal {
       cls: "kairos-date-picker",
       attr: { type: "date", "aria-label": "Jump to date", tabindex: "-1" },
     }) as HTMLInputElement;
+
+    // Right: close
+    const right = header.createDiv({ cls: "kairos-header-right" });
 
     // Close button (replaces Obsidian's floating .modal-close-button)
     const closeBtn = right.createEl("button", {
