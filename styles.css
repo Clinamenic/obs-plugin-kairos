@@ -9,7 +9,7 @@
 
 .kairos-modal {
   width: min(680px, 95vw);
-  max-height: 90vh;
+  height: min(760px, 90vh);
   display: flex;
   flex-direction: column;
   padding: 0 0 var(--size-4-4);
@@ -150,7 +150,7 @@
 }
 
 .kairos-editor-wrap .cm-editor {
-  background: var(--background-primary);
+  background: var(--background-secondary);
   font-family: var(--font-text);
   font-size: var(--font-text-size);
   line-height: 1.6;
@@ -222,7 +222,7 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background: var(--interactive-accent);
+  background: var(--color-accent);
   border-radius: 100px;
   padding: 0 var(--size-4-1) 0 var(--size-4-2);
   height: 20px;
@@ -315,12 +315,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--size-4-2);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
 }
 
 .kairos-drop-zone.kairos-drop-active {
-  border-color: var(--text-accent);
-  background: var(--background-modifier-hover);
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
 }
 
 .kairos-drop-hint {

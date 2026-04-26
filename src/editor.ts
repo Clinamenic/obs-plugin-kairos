@@ -28,6 +28,9 @@ const obsidianTheme = EditorView.theme({
     fontSize: "var(--font-text-size)",
     lineHeight: "1.6",
   },
+  ".cm-content": {
+    caretColor: "var(--text-normal)",
+  },
   ".cm-cursor": {
     borderLeftColor: "var(--text-normal)",
   },
