@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.3 - 2026-04-25
+
+Commit: 7763498 (2026-04-25T20:20:55-07:00)
+
+### Fixed
+
+- fix(ui): modal padding overridden to bottom-only (16px); removes Obsidian default padding on top and sides
+- fix(ui): modal header bottom margin removed
+- fix(ui): modal body given side padding to replace the removed modal padding
+
 ## 0.2.2 - 2026-04-25
 
 Commit: b8201c8 (2026-04-25T20:16:07-07:00)
