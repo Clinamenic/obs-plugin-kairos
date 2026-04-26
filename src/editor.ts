@@ -16,9 +16,10 @@ import { markdown } from "@codemirror/lang-markdown";
 
 const obsidianTheme = EditorView.theme({
   "&": {
-    background: "var(--background-primary)",
+    background: "var(--background-modifier-form-field)",
     color: "var(--text-normal)",
     caretColor: "var(--text-normal)",
+    borderRadius: "var(--radius-m)",
   },
   "&.cm-focused": {
     outline: "none",
@@ -27,6 +28,7 @@ const obsidianTheme = EditorView.theme({
     fontFamily: "var(--font-text)",
     fontSize: "var(--font-text-size)",
     lineHeight: "1.6",
+    borderRadius: "var(--radius-m)",
   },
   ".cm-content": {
     caretColor: "var(--text-normal)",

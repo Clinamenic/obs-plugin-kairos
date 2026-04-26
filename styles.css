@@ -137,25 +137,28 @@
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-m);
   transition: border-color 80ms;
+  margin-bottom: var(--size-4-4);
 }
 
 .kairos-editor-wrap:focus-within {
   border-color: var(--text-accent);
 }
 
-/* Editor content area */
+/* Editor content area (radius matches .kairos-editor-wrap so focus ring is not cut off at corners) */
 
 .kairos-editor-content {
   height: 300px;
+  border-radius: var(--radius-m);
 }
 
 .kairos-editor-wrap .cm-editor {
-  background: var(--background-secondary);
+  background: var(--background-modifier-form-field);
   font-family: var(--font-text);
   font-size: var(--font-text-size);
   line-height: 1.6;
   height: 300px;
   padding: var(--size-4-2) var(--size-4-3) var(--size-4-4) var(--size-4-3);
+  border-radius: var(--radius-m);
 }
 
 .kairos-editor-wrap .cm-editor.cm-focused {
@@ -165,6 +168,11 @@
 .kairos-editor-wrap .cm-scroller {
   overflow-y: auto;
   min-height: 120px;
+  border-radius: var(--radius-m);
+}
+
+.kairos-editor-wrap .cm-content {
+  border-radius: var(--radius-m);
 }
 
 /* Generic text input */
@@ -318,6 +326,7 @@
   justify-content: center;
   gap: var(--size-4-2);
   background: var(--background-secondary);
+  margin-bottom: var(--size-4-4);
 }
 
 .kairos-drop-zone.kairos-drop-active {
