@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.2 - 2026-04-26
+
+Commit: 93bb7dd (2026-04-26T07:54:40-07:00)
+
+### Changed
+
+- style(ui): chip background uses `--color-accent` so pills match the user accent colour from Settings
+- style(ui): media drop zone uses a light accent tint; camera icon larger and vertically centred; active drag state uses stronger accent tint
+- style(ui): journal editor uses `--background-secondary`; caret colour set to `--text-normal` so the cursor matches body text
+- style(ui): modal height fixed at `min(760px, 90vh)` so switching dates no longer changes overall modal size (content scrolls inside)
+
 ## 0.3.1 - 2026-04-26
 
 Commit: b25536b (2026-04-26T07:33:51-07:00)
