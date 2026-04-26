@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1 - 2026-04-26
+
+Commit: b25536b (2026-04-26T07:33:51-07:00)
+
+### Fixed
+
+- fix(editor): scroll boundary moved to CM scroller so autocomplete tooltip is no longer clipped by overflow
+
 ## 0.3.0 - 2026-04-26
 
 Commit: 3b57409 (2026-04-26T07:25:09-07:00)
