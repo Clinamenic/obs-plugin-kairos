@@ -9,14 +9,14 @@
 
 .kairos-modal {
   width: min(680px, 95vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.kairos-modal .modal-content {
-  padding: 0;
-}
-
-/* Override Obsidian's modal-header to host our nav bar */
+/* modal-header stays fixed; modal-content scrolls */
 .kairos-modal .modal-header {
+  flex-shrink: 0;
   padding: var(--size-4-3) var(--size-4-4);
   border-bottom: 1px solid var(--background-modifier-border);
   background: var(--background-secondary);
@@ -24,6 +24,13 @@
 
 .kairos-modal .modal-title {
   display: none;
+}
+
+.kairos-modal .modal-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0;
 }
 
 /* -------------------------------------------------------------------------
