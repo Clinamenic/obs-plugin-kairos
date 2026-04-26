@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.4 - 2026-04-26
+
+Commit: 0e55610
+
+### Fixed
+
+- fix(ui): pill border-radius set to 100px for fully rounded ends
+- fix(ui): x button uses a small circle background (rgba 20% black overlay) that darkens on hover
+
 ## 0.1.3 - 2026-04-26
 
 Commit: fea6787
