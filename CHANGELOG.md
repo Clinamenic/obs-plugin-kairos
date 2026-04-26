@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.0 - 2026-04-25
+
+Commit: a451fe7 (2026-04-25T19:33:19-07:00)
+
+### Added
+
+- feat(editor): replace plain textarea with a full CodeMirror 6 editor
+  - markdown syntax highlighting (headings, bold, italic, code, blockquotes, links)
+  - wikilink autocomplete (`[[` triggers suggestions from vault files, starts-with priority)
+  - keyboard formatting shortcuts: Mod-b (bold), Mod-i (italic), Mod-k (link), Mod-` (code)
+  - undo/redo via history extension
+  - soft line-wrapping
+  - Obsidian-themed styles (accent, text, background variables)
+  - auto-save via CM6 update listener (500 ms debounce, same as before)
+
 ## 0.1.9 - 2026-04-26
 
 Commit: 2204cfd
