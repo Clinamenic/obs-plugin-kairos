@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.9 - 2026-04-26
+
+Commit: 2204cfd
+
+### Fixed
+
+- fix(ui): sticky header finally working — modal capped at 90vh with flex-column layout; modal-content gets flex:1 + min-height:0 + overflow-y:auto so it scrolls while modal-header stays fixed above it
+
 ## 0.1.8 - 2026-04-26
 
 Commit: 6a36979
