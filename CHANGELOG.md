@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.3 - 2026-04-26
+
+Commit: fea6787
+
+### Fixed
+
+- fix(ui): move media drop zone to directly below content textarea
+- fix(ui): chips now appear below the input row, not inline with it
+- fix(ui): pills use accent colour (`--interactive-accent`) with `--text-on-accent` text
+- fix(ui): pills are shorter (fixed 20px height), x button has no background and is slightly larger
+
 ## 0.1.2 - 2026-04-26
 
 Commit: d676803
