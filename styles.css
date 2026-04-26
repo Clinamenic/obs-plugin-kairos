@@ -135,7 +135,7 @@
 
 .kairos-editor-wrap {
   border: 1px solid var(--background-modifier-border);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
   transition: border-color 80ms;
 }
 
@@ -155,7 +155,7 @@
   font-size: var(--font-text-size);
   line-height: 1.6;
   height: 300px;
-  padding: var(--size-4-2) var(--size-4-3);
+  padding: var(--size-4-2) var(--size-4-3) var(--size-4-4) var(--size-4-3);
 }
 
 .kairos-editor-wrap .cm-editor.cm-focused {
@@ -222,20 +222,21 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background: var(--color-accent);
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
   border-radius: 100px;
   padding: 0 var(--size-4-1) 0 var(--size-4-2);
   height: 20px;
   font-size: var(--font-ui-small);
-  color: var(--text-on-accent);
+  color: var(--text-normal);
   white-space: nowrap;
 }
 
 .kairos-chip-remove {
-  background: rgba(0, 0, 0, 0.2);
+  background: transparent;
   border: none;
   border-radius: 50%;
-  color: var(--text-on-accent);
+  color: var(--text-muted);
   cursor: pointer;
   font-size: 0.8em;
   width: 14px;
@@ -245,13 +246,12 @@
   justify-content: center;
   padding: 0;
   flex-shrink: 0;
-  opacity: 0.8;
-  transition: opacity 80ms, background 80ms;
+  transition: color 80ms, background 80ms;
 }
 
 .kairos-chip-remove:hover {
-  opacity: 1;
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
 }
 
 .kairos-chip-input {
@@ -307,8 +307,8 @@
 
 .kairos-drop-zone {
   border: 2px dashed var(--background-modifier-border);
-  border-radius: var(--radius-s);
-  padding: var(--size-4-3);
+  border-radius: var(--radius-m);
+  padding: var(--size-4-3) var(--size-4-3) var(--size-4-4) var(--size-4-3);
   text-align: center;
   transition: border-color 120ms, background 120ms;
   min-height: 72px;
@@ -317,12 +317,12 @@
   align-items: center;
   justify-content: center;
   gap: var(--size-4-2);
-  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  background: var(--background-secondary);
 }
 
 .kairos-drop-zone.kairos-drop-active {
   border-color: var(--color-accent);
-  background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  background: var(--background-modifier-hover);
 }
 
 .kairos-drop-hint {
