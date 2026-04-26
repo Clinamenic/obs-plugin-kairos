@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.3 - 2026-04-26
+
+Commit: b0435cf (2026-04-26T08:00:47-07:00)
+
+### Changed
+
+- style(ui): editor wrap and media drop zone use `--radius-m`, 16px bottom padding, media zone matches editor `--background-secondary`
+- style(ui): drag-over media zone uses modifier hover background instead of accent wash
+- style(ui): chip pills use `--background-secondary` with a neutral border; remove control uses theme text colours
+
 ## 0.3.2 - 2026-04-26
 
 Commit: 93bb7dd (2026-04-26T07:54:40-07:00)
