@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.5 - 2026-04-26
+
+Commit: 48a2123 (2026-04-26T08:17:35-07:00)
+
+### Added
+
+- feat(ui): media upload control is a 64px rounded square tile aligned with thumbnail size; attachments flow in a horizontal row after the tile (`display: contents` on the media grid)
+
+### Changed
+
+- style(ui): editor bottom margin plus `.kairos-body` gap sums to `var(--size-4-4)` (16px on default grid)
+- style(ui): media drop zone background uses `--background-modifier-form-field` like the editor
+
 ## 0.3.4 - 2026-04-26
 
 Commit: 9c76b52 (2026-04-26T08:09:18-07:00)
