@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.11 - 2026-04-26
+
+Commit: c84ddf0 (2026-04-26T08:53:29-07:00)
+
+### Changed
+
+- style(ui): journal header pills use a single scoped rule for both `button` and the calendar `label` so accent fill and on-accent text match; `box-shadow` removed on header controls; focus ring uses `outline` only; hidden date input has no focus shadow; calendar `label` uses `:focus-within` when the date field is focused
+
 ## 0.3.10 - 2026-04-26
 
 Commit: 2e177fc (2026-04-26T08:48:44-07:00)
