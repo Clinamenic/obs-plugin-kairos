@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.10 - 2026-04-26
+
+Commit: 2e177fc (2026-04-26T08:48:44-07:00)
+
+### Fixed
+
+- fix(ui): journal calendar uses a label with a full-bleed `input type=date` over the calendar icon so the native date picker opens on a real click; the body `showPicker` workaround is removed; the field value is synced in `loadDate` when the visible day changes
+
+### Changed
+
+- style(ui): media upload tile shows a 32px plus icon instead of the camera icon
+
 ## 0.3.9 - 2026-04-26
 
 Commit: a51309e (2026-04-26T08:40:03-07:00)
