@@ -10,6 +10,8 @@ import {
 } from "./journal-service";
 import { searchContacts } from "./contact-search";
 import { searchFieldValues } from "./field-search";
+import { createEditor } from "./editor";
+import type { EditorView } from "@codemirror/view";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -59,13 +61,13 @@ export class JournalModal extends Modal {
   private locations: string[] = [];
   private extraValues: Record<string, string | string[]> = {};
 
-  // Debounce
+  // Debounce for CM6 editor content saves
   private contentDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly DEBOUNCE_MS = 500;
 
   // DOM refs
   private headerDateEl!: HTMLElement;
-  private contentArea!: HTMLTextAreaElement;
+  private editorView: EditorView | null = null;
   private peopleContainer!: HTMLElement;
   private peopleInput!: HTMLInputElement;
   private peopleSuggestions!: HTMLElement;
@@ -94,6 +96,10 @@ export class JournalModal extends Modal {
     if (this.contentDebounceTimer !== null) {
       clearTimeout(this.contentDebounceTimer);
       this.contentDebounceTimer = null;
+    }
+    if (this.editorView) {
+      this.editorView.destroy();
+      this.editorView = null;
     }
     // Remove the nav bar we injected into Obsidian's modal-header
     this.titleEl.parentElement
@@ -160,12 +166,12 @@ export class JournalModal extends Modal {
 
     // Content
     body.createEl("label", { cls: "kairos-field-label", text: "Content" });
-    this.contentArea = body.createEl("textarea", {
-      cls: "kairos-content-area",
-    });
-    this.contentArea.setAttribute("rows", "10");
-    this.contentArea.addEventListener("input", () =>
-      this.scheduleContentSave()
+    const editorWrap = body.createDiv({ cls: "kairos-editor-wrap" });
+    this.editorView = createEditor(
+      editorWrap,
+      this.app,
+      "",
+      (doc) => this.scheduleContentSave(doc)
     );
 
     // Media (directly beneath content)
@@ -402,7 +408,15 @@ export class JournalModal extends Modal {
   private async populateFields(file: TFile): Promise<void> {
     const content = await this.app.vault.read(file);
     const body = this.extractBody(content);
-    this.contentArea.value = body;
+
+    if (this.editorView) {
+      const current = this.editorView.state.doc.toString();
+      if (current !== body) {
+        this.editorView.dispatch({
+          changes: { from: 0, to: current.length, insert: body },
+        });
+      }
+    }
 
     const cache = this.app.metadataCache.getFileCache(file);
     const fm = cache?.frontmatter ?? {};
@@ -437,7 +451,10 @@ export class JournalModal extends Modal {
   }
 
   private clearFields(): void {
-    this.contentArea.value = "";
+    if (this.editorView) {
+      const len = this.editorView.state.doc.length;
+      this.editorView.dispatch({ changes: { from: 0, to: len, insert: "" } });
+    }
     this.people = [];
     this.films = [];
     this.locations = [];
@@ -451,15 +468,15 @@ export class JournalModal extends Modal {
   }
 
   // -------------------------------------------------------------------------
-  // Content save (debounced)
+  // Content save (debounced, driven by CM6 update listener)
   // -------------------------------------------------------------------------
 
-  private scheduleContentSave(): void {
+  private scheduleContentSave(doc: string): void {
     if (this.contentDebounceTimer !== null) {
       clearTimeout(this.contentDebounceTimer);
     }
     this.contentDebounceTimer = setTimeout(
-      () => this.saveContent(),
+      () => this.saveContent(doc),
       this.DEBOUNCE_MS
     );
   }
@@ -468,13 +485,14 @@ export class JournalModal extends Modal {
     if (this.contentDebounceTimer !== null) {
       clearTimeout(this.contentDebounceTimer);
       this.contentDebounceTimer = null;
-      await this.saveContent();
+    }
+    if (this.editorView) {
+      await this.saveContent(this.editorView.state.doc.toString());
     }
   }
 
-  private async saveContent(): Promise<void> {
+  private async saveContent(newBody: string): Promise<void> {
     if (!this.currentFile) return;
-    const newBody = this.contentArea.value;
     await this.app.vault.process(this.currentFile, (raw) => {
       const frontmatterEnd = this.findFrontmatterEnd(raw);
       if (frontmatterEnd === -1) return raw;

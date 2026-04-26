@@ -1,7 +1,7 @@
 {
   "id": "kairos",
   "name": "Kairos",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "minAppVersion": "1.0.0",
   "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
   "author": "clinamenic",

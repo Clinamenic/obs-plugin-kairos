@@ -1,6 +1,6 @@
 {
   "name": "kairos",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
   "main": "main.js",
   "scripts": {
@@ -16,6 +16,12 @@
   "author": "clinamenic",
   "license": "MIT",
   "devDependencies": {
+    "@codemirror/autocomplete": "^6.20.1",
+    "@codemirror/commands": "^6.10.3",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/language": "^6.12.3",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.41.1",
     "@types/node": "^22.0.0",
     "builtin-modules": "^4.0.0",
     "esbuild": "^0.25.0",
