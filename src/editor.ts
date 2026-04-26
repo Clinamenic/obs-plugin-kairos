@@ -112,7 +112,7 @@ function wikilinkCompletions(app: App) {
 // Markdown formatting keymap
 // -------------------------------------------------------------------------
 
-function wrapSelection(view: EditorView, marker: string): boolean {
+export function wrapSelection(view: EditorView, marker: string): boolean {
   const { state } = view;
   const changes = state.changeByRange((range: SelectionRange) => {
     const selected = state.sliceDoc(range.from, range.to);
@@ -140,7 +140,7 @@ function wrapSelection(view: EditorView, marker: string): boolean {
   return true;
 }
 
-function insertLinkSkeleton(view: EditorView): boolean {
+export function insertLinkSkeleton(view: EditorView): boolean {
   const { state } = view;
   const changes = state.changeByRange((range: SelectionRange) => {
     const selected = state.sliceDoc(range.from, range.to);

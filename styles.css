@@ -116,12 +116,51 @@
   border-color: var(--text-accent);
 }
 
+/* Toolbar */
+
+.kairos-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: var(--size-4-1) var(--size-4-2);
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+}
+
+.kairos-toolbar-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-s);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-small);
+  height: 22px;
+  padding: 0 var(--size-4-2);
+  line-height: 1;
+  transition: color 80ms, background 80ms, border-color 80ms;
+  white-space: nowrap;
+}
+
+.kairos-toolbar-btn:hover {
+  background: var(--background-modifier-hover);
+  border-color: var(--background-modifier-border);
+  color: var(--text-normal);
+}
+
+/* Editor content area (scrollable, height-capped) */
+
+.kairos-editor-content {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .kairos-editor-wrap .cm-editor {
   background: var(--background-primary);
   font-family: var(--font-text);
   font-size: var(--font-text-size);
   line-height: 1.6;
-  min-height: 200px;
+  min-height: 120px;
   padding: var(--size-4-2) var(--size-4-3);
 }
 
@@ -130,7 +169,7 @@
 }
 
 .kairos-editor-wrap .cm-scroller {
-  overflow: auto;
+  overflow: visible;
 }
 
 /* Generic text input */

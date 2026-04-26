@@ -10,7 +10,7 @@ import {
 } from "./journal-service";
 import { searchContacts } from "./contact-search";
 import { searchFieldValues } from "./field-search";
-import { createEditor } from "./editor";
+import { createEditor, wrapSelection, insertLinkSkeleton } from "./editor";
 import type { EditorView } from "@codemirror/view";
 
 const MONTH_NAMES = [
@@ -167,8 +167,31 @@ export class JournalModal extends Modal {
     // Content
     body.createEl("label", { cls: "kairos-field-label", text: "Content" });
     const editorWrap = body.createDiv({ cls: "kairos-editor-wrap" });
+
+    // Toolbar
+    const toolbar = editorWrap.createDiv({ cls: "kairos-editor-toolbar" });
+    const toolbarButtons: { label: string; title: string; action: () => void }[] = [
+      { label: "B",    title: "Bold (Mod+B)",   action: () => this.editorView && wrapSelection(this.editorView, "**") },
+      { label: "I",    title: "Italic (Mod+I)", action: () => this.editorView && wrapSelection(this.editorView, "*") },
+      { label: "[ ]",  title: "Link (Mod+K)",   action: () => this.editorView && insertLinkSkeleton(this.editorView) },
+      { label: "`  `", title: "Code (Mod+`)",   action: () => this.editorView && wrapSelection(this.editorView, "`") },
+    ];
+    for (const btn of toolbarButtons) {
+      const el = toolbar.createEl("button", {
+        cls: "kairos-toolbar-btn",
+        text: btn.label,
+        attr: { title: btn.title, type: "button" },
+      });
+      el.addEventListener("mousedown", (e: MouseEvent) => {
+        e.preventDefault(); // keep focus in editor
+        btn.action();
+      });
+    }
+
+    // Editor area
+    const editorEl = editorWrap.createDiv({ cls: "kairos-editor-content" });
     this.editorView = createEditor(
-      editorWrap,
+      editorEl,
       this.app,
       "",
       (doc) => this.scheduleContentSave(doc)
