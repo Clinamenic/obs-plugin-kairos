@@ -80,16 +80,16 @@
   text-align: center;
 }
 
-/* Header pills: one style for <button> and <label> (calendar); no theme drop shadow */
+/* Header pills: same surface as the editor; hover steps up to the modal header surface */
 .kairos-modal .kairos-header .kairos-header-btn {
   align-items: center;
   appearance: none;
   -webkit-appearance: none;
-  background: var(--interactive-accent);
-  border: none;
+  background: var(--background-modifier-form-field);
+  border: 1px solid var(--background-modifier-border);
   border-radius: 100px;
   box-shadow: none;
-  color: var(--text-on-accent);
+  color: var(--text-normal);
   cursor: pointer;
   display: inline-flex;
   font-family: inherit;
@@ -101,13 +101,14 @@
   padding: 0 var(--size-4-2);
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
-  transition: opacity 80ms;
+  transition: background 80ms, border-color 80ms, color 80ms;
   user-select: none;
   white-space: nowrap;
 }
 
 .kairos-modal .kairos-header .kairos-header-btn:hover {
-  opacity: 0.85;
+  background: var(--background-secondary);
+  border-color: var(--background-modifier-border);
 }
 
 .kairos-modal .kairos-header .kairos-header-btn:focus {
