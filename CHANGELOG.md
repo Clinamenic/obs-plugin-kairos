@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0 - 2026-04-26
+
+Commit: 3b57409 (2026-04-26T07:25:09-07:00)
+
+### Added
+
+- feat(editor): right-click context menu with Bold, Italic, Code, Link, Cut, Copy, Paste actions
+
+### Changed
+
+- feat(editor): markdown token styling enhanced with per-level heading sizes, blockquote border, and hr colour
+- feat(ui): editor toolbar removed; formatting accessible via keyboard shortcuts and right-click menu
+
 ## 0.2.9 - 2026-04-26
 
 Commit: a6c45e9 (2026-04-26T06:48:22-07:00)
