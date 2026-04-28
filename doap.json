@@ -4,12 +4,12 @@
         "http://usefulinc.com/ns/doap#"
     ],
     "@type": "SoftwareApplication",
-    "name": "Kairos",
+    "name": "Chronolog",
     "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
-    "url": "https://github.com/clinamenic/obs-plugin-kairos",
-    "version": "0.3.12",
+    "url": "https://github.com/Clinamenic/obs-plugin-chronolog",
+    "version": "1.0.0",
     "dateCreated": "2026-04-25",
-    "dateModified": "2026-04-26",
+    "dateModified": "2026-04-27",
     "license": "https://opensource.org/licenses/MIT",
     "programmingLanguage": [
         "TypeScript"
@@ -19,21 +19,21 @@
     "operatingSystem": "macOS, Windows, Linux",
     "author": {
         "@type": "Person",
-        "name": "clinamenic",
-        "url": "https://github.com/clinamenic"
+        "name": "Clinamenic",
+        "url": "https://github.com/Clinamenic"
     },
     "repository": {
         "@type": "SoftwareSourceCode",
-        "url": "https://github.com/clinamenic/obs-plugin-kairos",
+        "url": "https://github.com/Clinamenic/obs-plugin-chronolog",
         "programmingLanguage": "TypeScript",
         "license": "https://opensource.org/licenses/MIT",
-        "codeRepository": "https://github.com/clinamenic/obs-plugin-kairos"
+        "codeRepository": "https://github.com/Clinamenic/obs-plugin-chronolog"
     },
-    "issueTracker": "https://github.com/clinamenic/obs-plugin-kairos/issues",
-    "releaseNotes": "https://github.com/clinamenic/obs-plugin-kairos/releases",
+    "issueTracker": "https://github.com/Clinamenic/obs-plugin-chronolog/issues",
+    "releaseNotes": "https://github.com/Clinamenic/obs-plugin-chronolog/releases",
     "changelog": {
         "@type": "WebPage",
-        "url": "https://github.com/clinamenic/obs-plugin-kairos/blob/main/CHANGELOG.md",
+        "url": "https://github.com/Clinamenic/obs-plugin-chronolog/blob/main/CHANGELOG.md",
         "description": "Plugin changelog with version history"
     },
     "keywords": [
@@ -65,13 +65,13 @@
             "version": "5.0+"
         }
     ],
-    "obsidianPluginId": "kairos",
+    "obsidianPluginId": "chronolog",
     "obsidianMinVersion": "1.0.0",
     "releases": [
         {
             "@type": "SoftwareRelease",
             "version": "0.1.0",
-            "url": "https://github.com/clinamenic/obs-plugin-kairos/releases/tag/v0.1.0",
+            "url": "https://github.com/Clinamenic/obs-plugin-chronolog/releases/tag/v0.1.0",
             "releaseDate": "2026-04-25",
             "description": "Initial release"
         }
@@ -80,7 +80,7 @@
         {
             "@type": "SoftwareApplication",
             "name": "starter-obs-plugin",
-            "url": "https://github.com/clinamenic/starter-obs-plugin",
+            "url": "https://github.com/Clinamenic/starter-obs-plugin",
             "description": "Obsidian plugin starter template"
         }
     ]

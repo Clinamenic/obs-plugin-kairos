@@ -4,7 +4,7 @@ export interface ExtraField {
   type: "text" | "list";
 }
 
-export interface KairosSettings {
+export interface ChronologSettings {
   journalRoot: string;
   mediaAttachmentsField: string;
   extraFields: ExtraField[];

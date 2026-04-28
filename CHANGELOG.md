@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.0.0 - 2026-04-27
+
+### BREAKING CHANGE
+
+- Plugin renamed from Kairos to Chronolog: Obsidian plugin id is now `chronolog`; display name is Chronolog; CSS classes use the `chronolog-` prefix; ribbon icon id is `chronolog-journal`. Existing installs must rename `.obsidian/plugins/kairos/` to `.obsidian/plugins/chronolog/` and copy `data.json`, or reinstall and restore settings manually.
+- Canonical repository URL: `https://github.com/Clinamenic/obs-plugin-chronolog`.
+
+### Fixed
+
+- fix(media): sanitize dropped attachment basenames so vault paths comply with Obsidian rules (forbidden `\`, `/`, `:`); pick a unique filename in the entry `media/` folder when a sanitized name already exists.
+
+### Changed
+
+- Types and exports: `ChronologPlugin`, `ChronologSettingTab`, `ChronologSettings`.
+
 ## 0.3.12 - 2026-04-26
 
 Commit: bf2e4e5 (2026-04-26T08:57:46-07:00)

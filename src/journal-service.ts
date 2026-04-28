@@ -1,5 +1,5 @@
-import { App, TFile, Modal, normalizePath } from "obsidian";
-import type KairosPlugin from "./main";
+import { App, TFile, Modal, normalizePath, Vault } from "obsidian";
+import type ChronologPlugin from "./main";
 
 const MONTH_NAMES = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -36,6 +36,47 @@ export function buildEntryPath(
 export function buildMediaFolder(entryPath: string): string {
   const folder = entryPath.substring(0, entryPath.lastIndexOf("/"));
   return `${folder}/media`;
+}
+
+/** Obsidian vault paths cannot contain `\`, `/`, or `:`. Strip path segments and replace forbidden chars. */
+export function sanitizeVaultAttachmentBasename(originalName: string): string {
+  const lastSep = Math.max(
+    originalName.lastIndexOf("/"),
+    originalName.lastIndexOf("\\")
+  );
+  const leaf = lastSep >= 0 ? originalName.slice(lastSep + 1) : originalName;
+  const safe = leaf.replace(/[/\\]+/g, "_").replace(/:+/g, "_");
+  const dot = safe.lastIndexOf(".");
+  const ext = dot >= 0 ? safe.slice(dot) : "";
+  let stem = dot >= 0 ? safe.slice(0, dot) : safe;
+  stem = stem.replace(/^[.\s_]+|[.\s_]+$/g, "");
+  if (!stem) stem = "attachment";
+  return ext ? `${stem}${ext}` : stem;
+}
+
+function insertSuffixBeforeExt(basename: string, n: number): string {
+  const dot = basename.lastIndexOf(".");
+  if (dot <= 0) return `${basename}-${n}`;
+  return `${basename.slice(0, dot)}-${n}${basename.slice(dot)}`;
+}
+
+/** Returns a vault path under `mediaFolder` that passes `checkPath`, avoiding name collisions. */
+export function resolveAttachmentDestPath(
+  vault: Vault,
+  mediaFolder: string,
+  originalName: string
+): { destPath: string; basename: string } {
+  const safeBasename = sanitizeVaultAttachmentBasename(originalName);
+  let i = 0;
+  while (true) {
+    const leaf =
+      i === 0 ? safeBasename : insertSuffixBeforeExt(safeBasename, i);
+    const destPath = normalizePath(`${mediaFolder}/${leaf}`);
+    if (!vault.getAbstractFileByPath(destPath)) {
+      return { destPath, basename: leaf };
+    }
+    i++;
+  }
 }
 
 export function findEntryByDate(app: App, isoDate: string): TFile | null {
@@ -105,7 +146,7 @@ function buildNewEntryFrontmatter(
 
 export async function createEntryFile(
   app: App,
-  plugin: KairosPlugin,
+  plugin: ChronologPlugin,
   date: Date
 ): Promise<TFile | null> {
   const isoDate = dateToIso(date);
@@ -167,7 +208,7 @@ export class ConfirmCreateModal extends Modal {
       text: `No journal entry found for ${iso}. Create one?`,
     });
 
-    const btnRow = contentEl.createDiv({ cls: "kairos-confirm-row" });
+    const btnRow = contentEl.createDiv({ cls: "chronolog-confirm-row" });
 
     btnRow.createEl("button", { text: "Create", cls: "mod-cta" }).addEventListener(
       "click",

@@ -1,5 +1,5 @@
 import { App, Menu, Modal, TFile, normalizePath, setIcon } from "obsidian";
-import type KairosPlugin from "./main";
+import type ChronologPlugin from "./main";
 import type { ExtraField } from "./types";
 import {
   dateToIso,
@@ -7,6 +7,7 @@ import {
   createEntryFile,
   ConfirmCreateModal,
   buildMediaFolder,
+  resolveAttachmentDestPath,
 } from "./journal-service";
 import { searchContacts } from "./contact-search";
 import { searchFieldValues } from "./field-search";
@@ -55,7 +56,7 @@ const VIDEO_NAME_PATTERN =
   /\.(mp4|m4v|webm|mov|mkv|ogv|avi|wmv|mpeg|mpg|3gp?)(\?.*)?$/i;
 
 export class JournalModal extends Modal {
-  private plugin: KairosPlugin;
+  private plugin: ChronologPlugin;
   private currentDate: Date;
   private currentFile: TFile | null = null;
 
@@ -89,14 +90,14 @@ export class JournalModal extends Modal {
   /** Filled in buildShell: syncs with currentDate in loadDate */
   private calendarDateInput: HTMLInputElement | null = null;
 
-  constructor(app: App, plugin: KairosPlugin, date?: Date) {
+  constructor(app: App, plugin: ChronologPlugin, date?: Date) {
     super(app);
     this.plugin = plugin;
     this.currentDate = date ?? new Date();
   }
 
   async onOpen(): Promise<void> {
-    this.modalEl.addClass("kairos-modal");
+    this.modalEl.addClass("chronolog-modal");
     this.buildShell();
     await this.loadDate(this.currentDate);
   }
@@ -112,7 +113,7 @@ export class JournalModal extends Modal {
     }
     // Remove the nav bar we injected into Obsidian's modal-header
     this.titleEl.parentElement
-      ?.querySelectorAll(".kairos-header")
+      ?.querySelectorAll(".chronolog-header")
       .forEach((el) => el.remove());
     this.calendarDateInput = null;
     this.contentEl.empty();
@@ -128,28 +129,28 @@ export class JournalModal extends Modal {
     // scrollable .modal-content), so stickiness comes for free from the DOM
     // structure rather than CSS tricks.
     const modalHeader = this.titleEl.parentElement!;
-    modalHeader.querySelectorAll(".kairos-header").forEach((el) => el.remove());
-    const header = modalHeader.createDiv({ cls: "kairos-header" });
+    modalHeader.querySelectorAll(".chronolog-header").forEach((el) => el.remove());
+    const header = modalHeader.createDiv({ cls: "chronolog-header" });
 
     // Left: Today / calendar
-    const left = header.createDiv({ cls: "kairos-header-left" });
+    const left = header.createDiv({ cls: "chronolog-header-left" });
 
     const todayBtn = left.createEl("button", {
-      cls: "kairos-header-btn",
+      cls: "chronolog-header-btn",
       text: "Today",
       attr: { "aria-label": "Go to today" },
     });
 
     // One control: label styled as a button, transparent type=date on top of the icon (native click opens the picker; no showPicker/body input)
     const calLabel = left.createEl("label", {
-      cls: "kairos-header-btn kairos-calendar-label",
+      cls: "chronolog-header-btn chronolog-calendar-label",
       attr: { "aria-label": "Jump to date" },
     });
-    const calIcon = calLabel.createSpan({ cls: "kairos-calendar-icon" });
+    const calIcon = calLabel.createSpan({ cls: "chronolog-calendar-icon" });
     calIcon.innerHTML =
       '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
     const dateInput = calLabel.createEl("input", {
-      cls: "kairos-calendar-date-input",
+      cls: "chronolog-calendar-date-input",
       attr: { type: "date" },
     }) as HTMLInputElement;
     this.calendarDateInput = dateInput;
@@ -167,28 +168,28 @@ export class JournalModal extends Modal {
     });
 
     // Centre: prev / date / next
-    const centre = header.createDiv({ cls: "kairos-header-center" });
+    const centre = header.createDiv({ cls: "chronolog-header-center" });
 
     const prevBtn = centre.createEl("button", {
-      cls: "kairos-header-btn",
+      cls: "chronolog-header-btn",
       text: "\u2039",
       attr: { "aria-label": "Previous day" },
     });
 
-    this.headerDateEl = centre.createEl("span", { cls: "kairos-header-date" });
+    this.headerDateEl = centre.createEl("span", { cls: "chronolog-header-date" });
 
     const nextBtn = centre.createEl("button", {
-      cls: "kairos-header-btn",
+      cls: "chronolog-header-btn",
       text: "\u203a",
       attr: { "aria-label": "Next day" },
     });
 
     // Right: close
-    const right = header.createDiv({ cls: "kairos-header-right" });
+    const right = header.createDiv({ cls: "chronolog-header-right" });
 
     // Close button (replaces Obsidian's floating .modal-close-button)
     const closeBtn = right.createEl("button", {
-      cls: "kairos-header-btn",
+      cls: "chronolog-header-btn",
       text: "\u00d7",
       attr: { "aria-label": "Close" },
     });
@@ -205,13 +206,13 @@ export class JournalModal extends Modal {
     contentEl.empty();
 
     // Body
-    const body = contentEl.createDiv({ cls: "kairos-body" });
+    const body = contentEl.createDiv({ cls: "chronolog-body" });
 
     // Content
-    const editorWrap = body.createDiv({ cls: "kairos-editor-wrap" });
+    const editorWrap = body.createDiv({ cls: "chronolog-editor-wrap" });
 
     // Editor area
-    const editorEl = editorWrap.createDiv({ cls: "kairos-editor-content" });
+    const editorEl = editorWrap.createDiv({ cls: "chronolog-editor-content" });
     this.editorView = createEditor(
       editorEl,
       this.app,
@@ -255,17 +256,17 @@ export class JournalModal extends Modal {
     });
 
     // Media (directly beneath content)
-    const dropZone = body.createDiv({ cls: "kairos-drop-zone" });
-    const mediaRowScroll = dropZone.createDiv({ cls: "kairos-media-row-scroll" });
-    const mediaRow = mediaRowScroll.createDiv({ cls: "kairos-media-row" });
+    const dropZone = body.createDiv({ cls: "chronolog-drop-zone" });
+    const mediaRowScroll = dropZone.createDiv({ cls: "chronolog-media-row-scroll" });
+    const mediaRow = mediaRowScroll.createDiv({ cls: "chronolog-media-row" });
     const dropHint = mediaRow.createDiv({
-      cls: "kairos-media-upload-tile kairos-drop-hint",
+      cls: "chronolog-media-upload-tile chronolog-drop-hint",
       attr: { "aria-label": "Add media", title: "Add media" },
     });
     dropHint.innerHTML =
       '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
 
-    this.mediaGrid = mediaRow.createDiv({ cls: "kairos-media-grid" });
+    this.mediaGrid = mediaRow.createDiv({ cls: "chronolog-media-grid" });
 
     // Hidden file input — opened by clicking the add-media tile
     const fileInput = dropZone.createEl("input", {
@@ -287,14 +288,14 @@ export class JournalModal extends Modal {
 
     dropZone.addEventListener("dragover", (e: DragEvent) => {
       e.preventDefault();
-      dropZone.addClass("kairos-drop-active");
+      dropZone.addClass("chronolog-drop-active");
     });
     dropZone.addEventListener("dragleave", () =>
-      dropZone.removeClass("kairos-drop-active")
+      dropZone.removeClass("chronolog-drop-active")
     );
     dropZone.addEventListener("drop", (e: DragEvent) => {
       e.preventDefault();
-      dropZone.removeClass("kairos-drop-active");
+      dropZone.removeClass("chronolog-drop-active");
       const files = e.dataTransfer?.files;
       if (files) {
         Array.from(files).forEach((f) => this.handleMediaDrop(f));
@@ -302,22 +303,22 @@ export class JournalModal extends Modal {
     });
 
     // People
-    const peopleRow = body.createDiv({ cls: "kairos-field-row" });
-    peopleRow.createEl("label", { cls: "kairos-field-label", text: "People" });
-    const peopleWrapper = peopleRow.createDiv({ cls: "kairos-chip-field" });
+    const peopleRow = body.createDiv({ cls: "chronolog-field-row" });
+    peopleRow.createEl("label", { cls: "chronolog-field-label", text: "People" });
+    const peopleWrapper = peopleRow.createDiv({ cls: "chronolog-chip-field" });
     const peopleInputRow = peopleWrapper.createDiv({
-      cls: "kairos-chip-input-row",
+      cls: "chronolog-chip-input-row",
     });
     this.peopleInput = peopleInputRow.createEl("input", {
-      cls: "kairos-chip-input",
+      cls: "chronolog-chip-input",
       attr: { type: "text", placeholder: "Search contacts..." },
     });
     this.peopleSuggestions = peopleInputRow.createDiv({
-      cls: "kairos-suggestions",
+      cls: "chronolog-suggestions",
     });
     this.peopleSuggestions.hide();
     this.peopleContainer = peopleWrapper.createDiv({
-      cls: "kairos-chip-container",
+      cls: "chronolog-chip-container",
     });
     this.peopleInput.addEventListener("input", () =>
       this.updatePeopleSuggestions()
@@ -339,25 +340,25 @@ export class JournalModal extends Modal {
     );
 
     // Films watched
-    const filmsRow = body.createDiv({ cls: "kairos-field-row" });
-    filmsRow.createEl("label", { cls: "kairos-field-label", text: "Films watched" });
-    const filmsWrapper = filmsRow.createDiv({ cls: "kairos-chip-field" });
+    const filmsRow = body.createDiv({ cls: "chronolog-field-row" });
+    filmsRow.createEl("label", { cls: "chronolog-field-label", text: "Films watched" });
+    const filmsWrapper = filmsRow.createDiv({ cls: "chronolog-chip-field" });
     const filmsInputRow = filmsWrapper.createDiv({
-      cls: "kairos-chip-input-row",
+      cls: "chronolog-chip-input-row",
     });
     this.filmsInput = filmsInputRow.createEl("input", {
-      cls: "kairos-chip-input",
+      cls: "chronolog-chip-input",
       attr: {
         type: "text",
         placeholder: "Add a film and press Enter...",
       },
     });
     this.filmsSuggestions = filmsInputRow.createDiv({
-      cls: "kairos-suggestions",
+      cls: "chronolog-suggestions",
     });
     this.filmsSuggestions.hide();
     this.filmsContainer = filmsWrapper.createDiv({
-      cls: "kairos-chip-container",
+      cls: "chronolog-chip-container",
     });
     this.filmsInput.addEventListener("keydown", (e: KeyboardEvent) => {
       if ((e.key === "Enter" || e.key === ",") && this.filmsInput.value.trim()) {
@@ -381,22 +382,22 @@ export class JournalModal extends Modal {
     );
 
     // Locations
-    const locationsRow = body.createDiv({ cls: "kairos-field-row" });
-    locationsRow.createEl("label", { cls: "kairos-field-label", text: "Locations" });
-    const locationsWrapper = locationsRow.createDiv({ cls: "kairos-chip-field" });
+    const locationsRow = body.createDiv({ cls: "chronolog-field-row" });
+    locationsRow.createEl("label", { cls: "chronolog-field-label", text: "Locations" });
+    const locationsWrapper = locationsRow.createDiv({ cls: "chronolog-chip-field" });
     const locationsInputRow = locationsWrapper.createDiv({
-      cls: "kairos-chip-input-row",
+      cls: "chronolog-chip-input-row",
     });
     this.locationsInput = locationsInputRow.createEl("input", {
-      cls: "kairos-chip-input",
+      cls: "chronolog-chip-input",
       attr: { type: "text", placeholder: "Add a location..." },
     }) as HTMLInputElement;
     this.locationsSuggestions = locationsInputRow.createDiv({
-      cls: "kairos-suggestions",
+      cls: "chronolog-suggestions",
     });
     this.locationsSuggestions.hide();
     this.locationsContainer = locationsWrapper.createDiv({
-      cls: "kairos-chip-container",
+      cls: "chronolog-chip-container",
     });
     this.locationsInput.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === ",") {
@@ -425,26 +426,26 @@ export class JournalModal extends Modal {
     // Extra fields
     const { extraFields } = this.plugin.settings;
     if (extraFields.length > 0) {
-      body.createEl("div", { cls: "kairos-divider" });
+      body.createEl("div", { cls: "chronolog-divider" });
       for (const field of extraFields) {
-        const fieldRow = body.createDiv({ cls: "kairos-field-row" });
+        const fieldRow = body.createDiv({ cls: "chronolog-field-row" });
         fieldRow.createEl("label", {
-          cls: "kairos-field-label",
+          cls: "chronolog-field-label",
           text: field.label || field.key,
         });
         if (field.type === "list") {
-          const fieldWrapper = fieldRow.createDiv({ cls: "kairos-chip-field" });
+          const fieldWrapper = fieldRow.createDiv({ cls: "chronolog-chip-field" });
           const fieldInputRow = fieldWrapper.createDiv({
-            cls: "kairos-chip-input-row",
+            cls: "chronolog-chip-input-row",
           });
           const input = fieldInputRow.createEl("input", {
-            cls: "kairos-chip-input",
+            cls: "chronolog-chip-input",
             attr: { type: "text", placeholder: `Add a value...` },
           }) as HTMLInputElement;
-          const sugEl = fieldInputRow.createDiv({ cls: "kairos-suggestions" });
+          const sugEl = fieldInputRow.createDiv({ cls: "chronolog-suggestions" });
           sugEl.hide();
           const container = fieldWrapper.createDiv({
-            cls: "kairos-chip-container",
+            cls: "chronolog-chip-container",
           });
           input.addEventListener("keydown", (e: KeyboardEvent) => {
             if (e.key === "Enter" || e.key === ",") {
@@ -472,12 +473,12 @@ export class JournalModal extends Modal {
           this.extraFieldContainers[field.key] = container;
           this.extraListValues[field.key] = [];
         } else {
-          const fieldWrapper = fieldRow.createDiv({ cls: "kairos-chip-input-row" });
+          const fieldWrapper = fieldRow.createDiv({ cls: "chronolog-chip-input-row" });
           const input = fieldWrapper.createEl("input", {
-            cls: "kairos-chip-input",
+            cls: "chronolog-chip-input",
             attr: { type: "text" },
           }) as HTMLInputElement;
-          const sugEl = fieldWrapper.createDiv({ cls: "kairos-suggestions" });
+          const sugEl = fieldWrapper.createDiv({ cls: "chronolog-suggestions" });
           sugEl.hide();
           input.addEventListener("change", () =>
             this.saveExtraField(field, input.value)
@@ -700,7 +701,7 @@ export class JournalModal extends Modal {
       const link = toWikilink(file.basename);
       if (this.people.includes(link)) continue;
       const item = this.peopleSuggestions.createDiv({
-        cls: "kairos-suggestion-item",
+        cls: "chronolog-suggestion-item",
         text: file.basename,
       });
       item.addEventListener("mousedown", (e: MouseEvent) => {
@@ -905,7 +906,7 @@ export class JournalModal extends Modal {
     }
     for (const item of items) {
       const el = container.createDiv({
-        cls: "kairos-suggestion-item",
+        cls: "chronolog-suggestion-item",
         text: item,
       });
       el.addEventListener("mousedown", (e: MouseEvent) => {
@@ -926,30 +927,30 @@ export class JournalModal extends Modal {
 
     for (const link of attachments) {
       const name = stripWikilink(link);
-      const item = this.mediaGrid.createDiv({ cls: "kairos-media-item" });
+      const item = this.mediaGrid.createDiv({ cls: "chronolog-media-item" });
 
       const mediaFile = this.app.vault.getFileByPath(
         normalizePath(`${buildMediaFolder(file.path)}/${name}`)
       );
 
       if (mediaFile && IMAGE_NAME_PATTERN.test(name)) {
-        const img = item.createEl("img", { cls: "kairos-media-thumb" });
+        const img = item.createEl("img", { cls: "chronolog-media-thumb" });
         img.src = this.app.vault.getResourcePath(mediaFile);
         img.alt = name;
       } else if (mediaFile && VIDEO_NAME_PATTERN.test(name)) {
-        const videoTile = item.createDiv({ cls: "kairos-media-video-tile" });
+        const videoTile = item.createDiv({ cls: "chronolog-media-video-tile" });
         videoTile.setAttribute("title", name);
         videoTile.setAttribute("aria-label", `Video: ${name}`);
         setIcon(videoTile, "video");
       } else {
         item.createEl("span", {
-          cls: "kairos-media-filename",
+          cls: "chronolog-media-filename",
           text: name,
         });
       }
 
       const removeBtn = item.createEl("button", {
-        cls: "kairos-media-remove",
+        cls: "chronolog-media-remove",
         text: "\u00d7",
         attr: { "aria-label": `Remove ${name}` },
       });
@@ -975,7 +976,11 @@ export class JournalModal extends Modal {
       await this.app.vault.createFolder(mediaFolder);
     }
 
-    const destPath = normalizePath(`${mediaFolder}/${nativeFile.name}`);
+    const { destPath, basename: safeBasename } = resolveAttachmentDestPath(
+      this.app.vault,
+      mediaFolder,
+      nativeFile.name
+    );
     const arrayBuffer = await nativeFile.arrayBuffer();
     let vaultFile = this.app.vault.getFileByPath(destPath);
     if (!vaultFile) {
@@ -986,7 +991,7 @@ export class JournalModal extends Modal {
     }
 
     const mediaField = this.plugin.settings.mediaAttachmentsField;
-    const link = toWikilink(nativeFile.name);
+    const link = toWikilink(safeBasename);
 
     await this.app.fileManager.processFrontMatter(
       this.currentFile,
@@ -1010,10 +1015,10 @@ export class JournalModal extends Modal {
 
   private createChip(label: string, onRemove: () => void): HTMLElement {
     const chip = document.createElement("span");
-    chip.className = "kairos-chip";
+    chip.className = "chronolog-chip";
     chip.createSpan({ text: label });
     const x = chip.createEl("button", {
-      cls: "kairos-chip-remove",
+      cls: "chronolog-chip-remove",
       text: "\u00d7",
       attr: { "aria-label": `Remove ${label}` },
     });

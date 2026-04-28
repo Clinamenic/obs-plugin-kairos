@@ -1,10 +1,10 @@
 {
-  "id": "kairos",
-  "name": "Kairos",
-  "version": "0.3.12",
+  "id": "chronolog",
+  "name": "Chronolog",
+  "version": "1.0.0",
   "minAppVersion": "1.0.0",
   "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
-  "author": "clinamenic",
-  "authorUrl": "https://github.com/clinamenic",
+  "author": "Clinamenic",
+  "authorUrl": "https://github.com/Clinamenic",
   "isDesktopOnly": true
 }

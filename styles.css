@@ -1,5 +1,5 @@
-/* Kairos plugin styles
- * All classes prefixed with kairos-
+/* Chronolog plugin styles
+ * All classes prefixed with chronolog-
  * All colours and spacing use Obsidian CSS variables
  */
 
@@ -7,7 +7,7 @@
  * Modal container
  * ------------------------------------------------------------------------- */
 
-.kairos-modal {
+.chronolog-modal {
   width: min(680px, 95vw);
   height: min(760px, 90vh);
   display: flex;
@@ -16,7 +16,7 @@
 }
 
 /* modal-header stays fixed; modal-content scrolls */
-.kairos-modal .modal-header {
+.chronolog-modal .modal-header {
   flex-shrink: 0;
   margin-bottom: 0;
   padding: var(--size-4-3) var(--size-4-4);
@@ -24,16 +24,16 @@
   background: var(--background-secondary);
 }
 
-.kairos-modal .modal-title {
+.chronolog-modal .modal-title {
   display: none;
 }
 
 /* Hide Obsidian's floating close button — replaced by our in-header close btn */
-.kairos-modal .modal-close-button {
+.chronolog-modal .modal-close-button {
   display: none;
 }
 
-.kairos-modal .modal-content {
+.chronolog-modal .modal-content {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -44,26 +44,26 @@
  * Header / navigation
  * ------------------------------------------------------------------------- */
 
-.kairos-header {
+.chronolog-header {
   display: flex;
   align-items: center;
   width: 100%;
 }
 
-.kairos-header-left {
+.chronolog-header-left {
   flex: 1;
   display: flex;
   align-items: center;
   gap: var(--size-4-2);
 }
 
-.kairos-header-center {
+.chronolog-header-center {
   display: flex;
   align-items: center;
   gap: var(--size-4-2);
 }
 
-.kairos-header-right {
+.chronolog-header-right {
   flex: 1;
   display: flex;
   align-items: center;
@@ -71,7 +71,7 @@
   gap: var(--size-4-2);
 }
 
-.kairos-header-date {
+.chronolog-header-date {
   font-weight: 600;
   font-size: var(--font-ui-small);
   color: var(--text-normal);
@@ -81,7 +81,7 @@
 }
 
 /* Header pills: same surface as the editor; hover steps up to the modal header surface */
-.kairos-modal .kairos-header .kairos-header-btn {
+.chronolog-modal .chronolog-header .chronolog-header-btn {
   align-items: center;
   appearance: none;
   -webkit-appearance: none;
@@ -106,34 +106,34 @@
   white-space: nowrap;
 }
 
-.kairos-modal .kairos-header .kairos-header-btn:hover {
+.chronolog-modal .chronolog-header .chronolog-header-btn:hover {
   background: var(--background-secondary);
   border-color: var(--background-modifier-border);
 }
 
-.kairos-modal .kairos-header .kairos-header-btn:focus {
+.chronolog-modal .chronolog-header .chronolog-header-btn:focus {
   box-shadow: none;
   outline: none;
 }
 
-.kairos-modal .kairos-header .kairos-header-btn:focus-visible {
+.chronolog-modal .chronolog-header .chronolog-header-btn:focus-visible {
   box-shadow: none;
   outline: 2px solid var(--text-accent);
   outline-offset: 2px;
 }
 
 /* Calendar: one control. Label matches header buttons; invisible date input covers the icon (user clicks the native field). */
-.kairos-modal .kairos-calendar-label {
+.chronolog-modal .chronolog-calendar-label {
   position: relative;
 }
 
-.kairos-modal .kairos-header label.kairos-header-btn:focus-within {
+.chronolog-modal .chronolog-header label.chronolog-header-btn:focus-within {
   box-shadow: none;
   outline: 2px solid var(--text-accent);
   outline-offset: 2px;
 }
 
-.kairos-modal .kairos-calendar-icon {
+.chronolog-modal .chronolog-calendar-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -141,11 +141,11 @@
   line-height: 0;
 }
 
-.kairos-modal .kairos-calendar-icon svg {
+.chronolog-modal .chronolog-calendar-icon svg {
   display: block;
 }
 
-.kairos-modal .kairos-calendar-date-input {
+.chronolog-modal .chronolog-calendar-date-input {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -165,8 +165,8 @@
   min-height: 0;
 }
 
-.kairos-modal .kairos-calendar-date-input:focus,
-.kairos-modal .kairos-calendar-date-input:focus-visible {
+.chronolog-modal .chronolog-calendar-date-input:focus,
+.chronolog-modal .chronolog-calendar-date-input:focus-visible {
   box-shadow: none;
   outline: none;
 }
@@ -175,20 +175,20 @@
  * Body / fields
  * ------------------------------------------------------------------------- */
 
-.kairos-body {
+.chronolog-body {
   padding: var(--size-4-4);
   display: flex;
   flex-direction: column;
   gap: var(--size-4-2);
 }
 
-.kairos-field-row {
+.chronolog-field-row {
   display: flex;
   align-items: flex-start;
   gap: var(--size-4-2);
 }
 
-.kairos-field-label {
+.chronolog-field-label {
   font-size: var(--font-ui-small);
   font-weight: 600;
   color: var(--text-muted);
@@ -199,26 +199,26 @@
 
 /* CM6 editor wrapper */
 
-.kairos-editor-wrap {
+.chronolog-editor-wrap {
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-m);
   transition: border-color 80ms;
-  /* With .kairos-body gap: var(--size-4-2), margin + gap = var(--size-4-4) (16px on default grid) */
+  /* With .chronolog-body gap: var(--size-4-2), margin + gap = var(--size-4-4) (16px on default grid) */
   margin-bottom: calc(var(--size-4-4) - var(--size-4-2));
 }
 
-.kairos-editor-wrap:focus-within {
+.chronolog-editor-wrap:focus-within {
   border-color: var(--text-accent);
 }
 
-/* Editor content area (radius matches .kairos-editor-wrap so focus ring is not cut off at corners) */
+/* Editor content area (radius matches .chronolog-editor-wrap so focus ring is not cut off at corners) */
 
-.kairos-editor-content {
+.chronolog-editor-content {
   height: 300px;
   border-radius: var(--radius-m);
 }
 
-.kairos-editor-wrap .cm-editor {
+.chronolog-editor-wrap .cm-editor {
   background: var(--background-modifier-form-field);
   font-family: var(--font-text);
   font-size: var(--font-text-size);
@@ -228,23 +228,23 @@
   border-radius: var(--radius-m);
 }
 
-.kairos-editor-wrap .cm-editor.cm-focused {
+.chronolog-editor-wrap .cm-editor.cm-focused {
   outline: none;
 }
 
-.kairos-editor-wrap .cm-scroller {
+.chronolog-editor-wrap .cm-scroller {
   overflow-y: auto;
   min-height: 120px;
   border-radius: var(--radius-m);
 }
 
-.kairos-editor-wrap .cm-content {
+.chronolog-editor-wrap .cm-content {
   border-radius: var(--radius-m);
 }
 
 /* Generic text input */
 
-.kairos-text-input {
+.chronolog-text-input {
   width: 100%;
   background: var(--background-primary);
   border: 1px solid var(--background-modifier-border);
@@ -256,7 +256,7 @@
   transition: border-color 80ms;
 }
 
-.kairos-text-input:focus {
+.chronolog-text-input:focus {
   border-color: var(--text-accent);
   outline: none;
 }
@@ -265,7 +265,7 @@
  * Chip fields (people, films)
  * ------------------------------------------------------------------------- */
 
-.kairos-chip-field {
+.chronolog-chip-field {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -273,7 +273,7 @@
   gap: var(--size-4-1);
 }
 
-.kairos-chip-input-row {
+.chronolog-chip-input-row {
   position: relative;
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
@@ -281,11 +281,11 @@
   transition: border-color 80ms;
 }
 
-.kairos-chip-input-row:focus-within {
+.chronolog-chip-input-row:focus-within {
   border-color: var(--text-accent);
 }
 
-.kairos-chip-container {
+.chronolog-chip-container {
   display: flex;
   flex-wrap: wrap;
   gap: var(--size-4-1);
@@ -293,7 +293,7 @@
   padding: var(--size-4-2) var(--size-4-2) var(--size-4-1);
 }
 
-.kairos-chip {
+.chronolog-chip {
   display: inline-flex;
   align-items: center;
   gap: 3px;
@@ -307,7 +307,7 @@
   white-space: nowrap;
 }
 
-.kairos-chip-remove {
+.chronolog-chip-remove {
   background: transparent;
   border: none;
   border-radius: 50%;
@@ -324,12 +324,12 @@
   transition: color 80ms, background 80ms;
 }
 
-.kairos-chip-remove:hover {
+.chronolog-chip-remove:hover {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
-.kairos-chip-input {
+.chronolog-chip-input {
   background: none;
   border: none;
   color: var(--text-normal);
@@ -342,7 +342,7 @@
 
 /* Suggestions dropdown */
 
-.kairos-suggestions {
+.chronolog-suggestions {
   background: var(--background-primary);
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
@@ -356,14 +356,14 @@
   z-index: 100;
 }
 
-.kairos-suggestion-item {
+.chronolog-suggestion-item {
   cursor: pointer;
   font-size: var(--font-ui-small);
   padding: var(--size-4-1) var(--size-4-3);
   color: var(--text-normal);
 }
 
-.kairos-suggestion-item:hover {
+.chronolog-suggestion-item:hover {
   background: var(--background-modifier-hover);
 }
 
@@ -371,7 +371,7 @@
  * Divider between standard and extra fields
  * ------------------------------------------------------------------------- */
 
-.kairos-divider {
+.chronolog-divider {
   border-top: 1px solid var(--background-modifier-border);
   margin: var(--size-4-1) 0;
 }
@@ -380,7 +380,7 @@
  * Media drop zone
  * ------------------------------------------------------------------------- */
 
-.kairos-drop-zone {
+.chronolog-drop-zone {
   border: 2px dashed var(--background-modifier-border);
   border-radius: var(--radius-m);
   padding: var(--size-4-3);
@@ -391,17 +391,17 @@
   margin-bottom: var(--size-4-4);
 }
 
-.kairos-drop-zone.kairos-drop-active {
+.chronolog-drop-zone.chronolog-drop-active {
   border-color: var(--color-accent);
   background: var(--background-modifier-hover);
 }
 
-.kairos-drop-zone.kairos-drop-active .kairos-media-upload-tile {
+.chronolog-drop-zone.chronolog-drop-active .chronolog-media-upload-tile {
   background: var(--background-modifier-hover);
 }
 
 /* Horizontal scroll; tile row is width: max-content (grid uses display: contents) */
-.kairos-media-row-scroll {
+.chronolog-media-row-scroll {
   margin: 0;
   -webkit-overflow-scrolling: touch;
   overflow-x: auto;
@@ -410,7 +410,7 @@
   width: 100%;
 }
 
-.kairos-media-row {
+.chronolog-media-row {
   align-items: flex-start;
   display: flex;
   flex-direction: row;
@@ -419,7 +419,7 @@
   width: max-content;
 }
 
-.kairos-media-upload-tile {
+.chronolog-media-upload-tile {
   align-items: center;
   background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
@@ -434,21 +434,21 @@
   width: 64px;
 }
 
-.kairos-drop-hint {
+.chronolog-drop-hint {
   color: var(--text-muted);
 }
 
-.kairos-drop-hint:hover {
+.chronolog-drop-hint:hover {
   background: var(--background-modifier-hover);
   color: var(--text-normal);
 }
 
-/* Children flex with .kairos-media-row; this wrapper adds no box */
-.kairos-media-grid {
+/* Children flex with .chronolog-media-row; this wrapper adds no box */
+.chronolog-media-grid {
   display: contents;
 }
 
-.kairos-media-item {
+.chronolog-media-item {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -458,7 +458,7 @@
   border-radius: var(--radius-s);
 }
 
-.kairos-media-thumb {
+.chronolog-media-thumb {
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-s);
   box-sizing: border-box;
@@ -467,7 +467,7 @@
   width: 64px;
 }
 
-.kairos-media-video-tile {
+.chronolog-media-video-tile {
   align-items: center;
   background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
@@ -481,12 +481,12 @@
   width: 64px;
 }
 
-.kairos-media-video-tile svg {
+.chronolog-media-video-tile svg {
   height: 32px;
   width: 32px;
 }
 
-.kairos-media-filename {
+.chronolog-media-filename {
   font-size: var(--font-ui-small);
   color: var(--text-muted);
   max-width: 80px;
@@ -495,7 +495,7 @@
   white-space: nowrap;
 }
 
-.kairos-media-remove {
+.chronolog-media-remove {
   background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
   border-radius: 50%;
@@ -515,14 +515,14 @@
   z-index: 1;
 }
 
-.kairos-media-item:hover .kairos-media-remove,
-.kairos-media-item:focus-within .kairos-media-remove {
+.chronolog-media-item:hover .chronolog-media-remove,
+.chronolog-media-item:focus-within .chronolog-media-remove {
   opacity: 1;
   pointer-events: auto;
 }
 
-.kairos-media-remove:hover,
-.kairos-media-remove:focus-visible {
+.chronolog-media-remove:hover,
+.chronolog-media-remove:focus-visible {
   color: var(--text-error);
 }
 
@@ -530,7 +530,7 @@
  * Confirm create modal
  * ------------------------------------------------------------------------- */
 
-.kairos-confirm-row {
+.chronolog-confirm-row {
   display: flex;
   gap: var(--size-4-2);
   justify-content: flex-end;
@@ -541,7 +541,7 @@
  * Settings: extra field rows
  * ------------------------------------------------------------------------- */
 
-.kairos-extra-field-row .setting-item-control {
+.chronolog-extra-field-row .setting-item-control {
   flex-wrap: wrap;
   gap: var(--size-4-2);
 }

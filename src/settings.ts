@@ -1,17 +1,17 @@
 import { App, PluginSettingTab, Setting, ButtonComponent } from "obsidian";
-import type KairosPlugin from "./main";
-import type { KairosSettings, ExtraField } from "./types";
+import type ChronologPlugin from "./main";
+import type { ChronologSettings, ExtraField } from "./types";
 
-export const DEFAULT_SETTINGS: KairosSettings = {
+export const DEFAULT_SETTINGS: ChronologSettings = {
   journalRoot: "journal",
   mediaAttachmentsField: "media_attachments",
   extraFields: [],
 };
 
-export class KairosSettingTab extends PluginSettingTab {
-  plugin: KairosPlugin;
+export class ChronologSettingTab extends PluginSettingTab {
+  plugin: ChronologPlugin;
 
-  constructor(app: App, plugin: KairosPlugin) {
+  constructor(app: App, plugin: ChronologPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
@@ -109,7 +109,7 @@ export class KairosSettingTab extends PluginSettingTab {
             })
           );
 
-        fieldSetting.settingEl.addClass("kairos-extra-field-row");
+        fieldSetting.settingEl.addClass("chronolog-extra-field-row");
       }
     );
   }
