@@ -2,6 +2,8 @@
 
 ## 1.0.0 - 2026-04-27
 
+Commit: 6a07020 (2026-04-27T21:34:16-07:00)
+
 ### BREAKING CHANGE
 
 - Plugin renamed from Kairos to Chronolog: Obsidian plugin id is now `chronolog`; display name is Chronolog; CSS classes use the `chronolog-` prefix; ribbon icon id is `chronolog-journal`. Existing installs must rename `.obsidian/plugins/kairos/` to `.obsidian/plugins/chronolog/` and copy `data.json`, or reinstall and restore settings manually.
