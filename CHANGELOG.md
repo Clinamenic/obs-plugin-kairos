@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.1 - 2026-04-30
+
+Commit: e2267c9 (2026-04-30T10:26:11-07:00)
+
+### Changed
+
+- style(ui): content-aware day jumps use double angle buttons (`‹‹` / `››`) with the same styling as adjacent day navigation; full descriptions remain on `aria-label`.
+
 ## 1.2.0 - 2026-04-30
 
 Commit: e3772b9 (2026-04-30T10:18:45-07:00)
