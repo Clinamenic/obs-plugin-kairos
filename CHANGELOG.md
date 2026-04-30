@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0 - 2026-04-30
+
+Commit: e3772b9 (2026-04-30T10:18:45-07:00)
+
+### Changed
+
+- feat(journal): keep frontmatter field `has-content` in sync for `type: journal-entry` notes; value is derived from whether the Markdown body contains non-whitespace after debounced vault updates.
+- feat(ui): add header actions `Previous day with content` and `Next day with content`, which jump by journal `date` to the nearest preceding or succeeding entry marked `has-content: true`.
+
+### Compatibility
+
+- `minAppVersion` is raised to 1.5.7 to align with the frontmatter partitioning API required for stable body extraction.
+
 ## 1.1.1 - 2026-04-30
 
 Commit: b208145 (2026-04-29T17:25:56-07:00)
