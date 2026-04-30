@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 - 2026-04-29
+
+Commit: 54f6257 (2026-04-29T17:21:10-07:00)
+
+### Changed
+
+- feat(ui): sidebar ribbon icon uses the Chronolog mark asset, scaled to Obsidian `addIcon` space and colored with `currentColor` for theme-consistent styling.
+
 ## 1.0.0 - 2026-04-27
 
 Commit: 6a07020 (2026-04-27T21:34:16-07:00)
