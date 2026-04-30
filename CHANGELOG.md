@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1 - 2026-04-30
+
+Commit: b208145 (2026-04-29T17:25:56-07:00)
+
+### Changed
+
+- style(ui): ribbon Chronolog mark uses a heavier silhouette (`stroke` under `fill`; stroke widths 32 / 14 in 1024px icon space).
+
 ## 1.1.0 - 2026-04-29
 
 Commit: 54f6257 (2026-04-29T17:21:10-07:00)
