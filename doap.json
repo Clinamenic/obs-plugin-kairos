@@ -7,7 +7,7 @@
     "name": "Chronolog",
     "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
     "url": "https://github.com/Clinamenic/obs-plugin-chronolog",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "dateCreated": "2026-04-25",
     "dateModified": "2026-04-30",
     "license": "https://opensource.org/licenses/MIT",
