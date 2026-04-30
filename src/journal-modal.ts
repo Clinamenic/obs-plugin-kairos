@@ -188,7 +188,7 @@ export class JournalModal extends Modal {
 
     const prevWithContentBtn = centre.createEl("button", {
       cls: "chronolog-header-btn",
-      text: "Previous day with content",
+      text: "\u2039\u2039",
       attr: { "aria-label": "Previous day with content" },
     });
 
@@ -208,7 +208,7 @@ export class JournalModal extends Modal {
 
     const nextWithContentBtn = centre.createEl("button", {
       cls: "chronolog-header-btn",
-      text: "Next day with content",
+      text: "\u203a\u203a",
       attr: { "aria-label": "Next day with content" },
     });
 
