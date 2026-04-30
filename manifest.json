@@ -1,7 +1,7 @@
 {
   "id": "chronolog",
   "name": "Chronolog",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "minAppVersion": "1.5.7",
   "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
   "author": "Clinamenic",
