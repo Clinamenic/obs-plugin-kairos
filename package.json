@@ -1,6 +1,6 @@
 {
   "name": "chronolog",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Opens a daily journal dashboard for writing entries and managing structured frontmatter fields.",
   "main": "main.js",
   "scripts": {
