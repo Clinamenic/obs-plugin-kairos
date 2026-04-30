@@ -51,6 +51,22 @@ function stripWikilink(raw: string): string {
   return raw.replace(/^\[\[/, "").replace(/\]\]$/, "");
 }
 
+function normalizeFrontmatterBoolean(value: unknown): boolean {
+  if (value === true) return true;
+  if (typeof value === "string") return value.trim().toLowerCase() === "true";
+  if (typeof value === "number") return value === 1;
+  return false;
+}
+
+function parseFrontmatterIsoDate(value: unknown): string | null {
+  if (value instanceof Date) return dateToIso(value);
+  if (typeof value === "string" || typeof value === "number") {
+    const asString = String(value).slice(0, 10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(asString) ? asString : null;
+  }
+  return null;
+}
+
 const IMAGE_NAME_PATTERN = /\.(jpe?g|png|gif|webp|avif)$/i;
 const VIDEO_NAME_PATTERN =
   /\.(mp4|m4v|webm|mov|mkv|ogv|avi|wmv|mpeg|mpg|3gp?)(\?.*)?$/i;
@@ -170,6 +186,12 @@ export class JournalModal extends Modal {
     // Centre: prev / date / next
     const centre = header.createDiv({ cls: "chronolog-header-center" });
 
+    const prevWithContentBtn = centre.createEl("button", {
+      cls: "chronolog-header-btn",
+      text: "Previous day with content",
+      attr: { "aria-label": "Previous day with content" },
+    });
+
     const prevBtn = centre.createEl("button", {
       cls: "chronolog-header-btn",
       text: "\u2039",
@@ -184,6 +206,12 @@ export class JournalModal extends Modal {
       attr: { "aria-label": "Next day" },
     });
 
+    const nextWithContentBtn = centre.createEl("button", {
+      cls: "chronolog-header-btn",
+      text: "Next day with content",
+      attr: { "aria-label": "Next day with content" },
+    });
+
     // Right: close
     const right = header.createDiv({ cls: "chronolog-header-right" });
 
@@ -194,8 +222,16 @@ export class JournalModal extends Modal {
       attr: { "aria-label": "Close" },
     });
 
+    prevWithContentBtn.addEventListener(
+      "click",
+      () => void this.navigateToPreviousDayWithContent()
+    );
     prevBtn.addEventListener("click", () => this.navigateDay(-1));
     nextBtn.addEventListener("click", () => this.navigateDay(1));
+    nextWithContentBtn.addEventListener(
+      "click",
+      () => void this.navigateToNextDayWithContent()
+    );
     todayBtn.addEventListener("click", () => this.navigateTo(new Date()));
     closeBtn.addEventListener("click", () => this.close());
 
@@ -516,6 +552,42 @@ export class JournalModal extends Modal {
   private async navigateTo(date: Date): Promise<void> {
     await this.flushContentDebounce();
     await this.loadDate(date);
+  }
+
+  private async navigateToPreviousDayWithContent(): Promise<void> {
+    await this.flushContentDebounce();
+    const currentIso = dateToIso(this.currentDate);
+    let bestIso: string | null = null;
+
+    for (const file of this.app.vault.getMarkdownFiles()) {
+      const fm = this.app.metadataCache.getFileCache(file)?.frontmatter;
+      if (!fm || fm["type"] !== "journal-entry") continue;
+      if (!normalizeFrontmatterBoolean(fm["has-content"])) continue;
+      const entryIso = parseFrontmatterIsoDate(fm["date"]);
+      if (!entryIso || entryIso >= currentIso) continue;
+      if (!bestIso || entryIso > bestIso) bestIso = entryIso;
+    }
+
+    if (!bestIso) return;
+    await this.loadDate(new Date(`${bestIso}T00:00:00`));
+  }
+
+  private async navigateToNextDayWithContent(): Promise<void> {
+    await this.flushContentDebounce();
+    const currentIso = dateToIso(this.currentDate);
+    let bestIso: string | null = null;
+
+    for (const file of this.app.vault.getMarkdownFiles()) {
+      const fm = this.app.metadataCache.getFileCache(file)?.frontmatter;
+      if (!fm || fm["type"] !== "journal-entry") continue;
+      if (!normalizeFrontmatterBoolean(fm["has-content"])) continue;
+      const entryIso = parseFrontmatterIsoDate(fm["date"]);
+      if (!entryIso || entryIso <= currentIso) continue;
+      if (!bestIso || entryIso < bestIso) bestIso = entryIso;
+    }
+
+    if (!bestIso) return;
+    await this.loadDate(new Date(`${bestIso}T00:00:00`));
   }
 
   // -------------------------------------------------------------------------

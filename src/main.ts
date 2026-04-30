@@ -3,6 +3,7 @@ import { DEFAULT_SETTINGS, ChronologSettingTab } from "./settings";
 import { JournalModal } from "./journal-modal";
 import type { ChronologSettings } from "./types";
 import { CHRONOLOG_RIBBON_ICON_SVG } from "./chronolog-ribbon-icon-svg";
+import { registerBodyContentTracking } from "./body-content-tracker";
 
 const CHRONOLOG_ICON_ID = "chronolog-journal";
 
@@ -26,6 +27,7 @@ export default class ChronologPlugin extends Plugin {
       callback: () => new JournalModal(this.app, this).open(),
     });
 
+    registerBodyContentTracking(this);
     this.addSettingTab(new ChronologSettingTab(this.app, this));
   }
 

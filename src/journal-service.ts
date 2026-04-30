@@ -136,6 +136,7 @@ function buildNewEntryFrontmatter(
     "locations:",
     "people:",
     "type: journal-entry",
+    "has-content: false",
     `previous_entry: ${prevLink}`,
     "next_entry:",
     "media_attachments:",
