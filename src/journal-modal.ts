@@ -86,6 +86,15 @@ export class JournalModal extends Modal {
   private contentDebounceTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly DEBOUNCE_MS = 500;
 
+  /** Serializes vault body + frontmatter ops so overlaps cannot resurrect stale content */
+  private vaultOpChain: Promise<void> = Promise.resolve();
+
+  /**
+   * Bumped when navigated journal file path changes. Debounced body saves captured
+   * at schedule time are dropped if stale after flush + navigation raced the timer callback.
+   */
+  private journalTargetEpoch = 0;
+
   // DOM refs
   private headerDateEl!: HTMLElement;
   private editorView: EditorView | null = null;
@@ -123,9 +132,20 @@ export class JournalModal extends Modal {
       clearTimeout(this.contentDebounceTimer);
       this.contentDebounceTimer = null;
     }
+    let closePersist: { file: TFile; body: string } | null = null;
+    if (this.editorView && this.currentFile) {
+      closePersist = {
+        file: this.currentFile,
+        body: this.editorView.state.doc.toString(),
+      };
+    }
     if (this.editorView) {
       this.editorView.destroy();
       this.editorView = null;
+    }
+    if (closePersist) {
+      const { file, body } = closePersist;
+      void this.enqueueVaultOp(() => this.processBodyIntoFile(file, body));
     }
     // Remove the nav bar we injected into Obsidian's modal-header
     this.titleEl.parentElement
@@ -605,6 +625,7 @@ export class JournalModal extends Modal {
 
     if (!file) {
       // Show empty state; offer creation
+      this.bumpJournalEpochIfNeeded(null);
       this.currentFile = null;
       this.clearFields();
       await new Promise<void>((resolve) => {
@@ -618,6 +639,7 @@ export class JournalModal extends Modal {
               date
             );
             if (created) {
+              this.bumpJournalEpochIfNeeded(created);
               this.currentFile = created;
               await this.populateFields(created);
             }
@@ -629,6 +651,7 @@ export class JournalModal extends Modal {
       return;
     }
 
+    this.bumpJournalEpochIfNeeded(file);
     this.currentFile = file;
     await this.populateFields(file);
   }
@@ -709,6 +732,35 @@ export class JournalModal extends Modal {
   }
 
   // -------------------------------------------------------------------------
+  // Vault serialization (body + frontmatter)
+  // -------------------------------------------------------------------------
+
+  /** Single-writer queue for all journal file mutations opened from this modal */
+  private enqueueVaultOp(task: () => Promise<void>): Promise<void> {
+    const next = this.vaultOpChain.then(() => task());
+    this.vaultOpChain = next.catch(() => {});
+    return next;
+  }
+
+  private bumpJournalEpochIfNeeded(nextFile: TFile | null): void {
+    const prev = this.currentFile?.path ?? "";
+    const next = nextFile?.path ?? "";
+    if (prev !== next) this.journalTargetEpoch++;
+  }
+
+  private async processBodyIntoFile(
+    target: TFile,
+    newBody: string
+  ): Promise<void> {
+    await this.app.vault.process(target, (raw) => {
+      const frontmatterEnd = this.findFrontmatterEnd(raw);
+      if (frontmatterEnd === -1) return raw;
+      const header = raw.slice(0, frontmatterEnd);
+      return `${header}\n${newBody}`;
+    });
+  }
+
+  // -------------------------------------------------------------------------
   // Content save (debounced, driven by CM6 update listener)
   // -------------------------------------------------------------------------
 
@@ -716,10 +768,24 @@ export class JournalModal extends Modal {
     if (this.contentDebounceTimer !== null) {
       clearTimeout(this.contentDebounceTimer);
     }
-    this.contentDebounceTimer = setTimeout(
-      () => this.saveContent(doc),
-      this.DEBOUNCE_MS
-    );
+    const epochAtSchedule = this.journalTargetEpoch;
+    this.contentDebounceTimer = setTimeout(() => {
+      this.contentDebounceTimer = null;
+      void this.saveDebouncedBody(doc, epochAtSchedule);
+    }, this.DEBOUNCE_MS);
+  }
+
+  /** Debounced path: drop work if navigated away before the delayed callback ran */
+  private async saveDebouncedBody(
+    body: string,
+    epochAtSchedule: number
+  ): Promise<void> {
+    await this.enqueueVaultOp(async () => {
+      if (epochAtSchedule !== this.journalTargetEpoch) return;
+      const file = this.currentFile;
+      if (!file) return;
+      await this.processBodyIntoFile(file, body);
+    });
   }
 
   private async flushContentDebounce(): Promise<void> {
@@ -727,19 +793,10 @@ export class JournalModal extends Modal {
       clearTimeout(this.contentDebounceTimer);
       this.contentDebounceTimer = null;
     }
-    if (this.editorView) {
-      await this.saveContent(this.editorView.state.doc.toString());
-    }
-  }
-
-  private async saveContent(newBody: string): Promise<void> {
-    if (!this.currentFile) return;
-    await this.app.vault.process(this.currentFile, (raw) => {
-      const frontmatterEnd = this.findFrontmatterEnd(raw);
-      if (frontmatterEnd === -1) return raw;
-      const header = raw.slice(0, frontmatterEnd);
-      return `${header}\n${newBody}`;
-    });
+    if (!this.editorView || !this.currentFile) return;
+    const file = this.currentFile;
+    const doc = this.editorView.state.doc.toString();
+    await this.enqueueVaultOp(() => this.processBodyIntoFile(file, doc));
   }
 
   // -------------------------------------------------------------------------
@@ -789,13 +846,14 @@ export class JournalModal extends Modal {
   }
 
   private async savePeople(): Promise<void> {
-    if (!this.currentFile) return;
-    await this.app.fileManager.processFrontMatter(
-      this.currentFile,
-      (fm) => {
-        fm["people"] = this.people.length ? this.people : null;
-      }
-    );
+    const file = this.currentFile;
+    if (!file) return;
+    const snapshot = [...this.people];
+    await this.enqueueVaultOp(async () => {
+      await this.app.fileManager.processFrontMatter(file, (fm) => {
+        fm["people"] = snapshot.length ? snapshot : null;
+      });
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -823,13 +881,14 @@ export class JournalModal extends Modal {
   }
 
   private async saveFilms(): Promise<void> {
-    if (!this.currentFile) return;
-    await this.app.fileManager.processFrontMatter(
-      this.currentFile,
-      (fm) => {
-        fm["films-watched"] = this.films.length ? this.films : null;
-      }
-    );
+    const file = this.currentFile;
+    if (!file) return;
+    const snapshot = [...this.films];
+    await this.enqueueVaultOp(async () => {
+      await this.app.fileManager.processFrontMatter(file, (fm) => {
+        fm["films-watched"] = snapshot.length ? snapshot : null;
+      });
+    });
   }
 
   private updateFilmsSuggestions(): void {
@@ -869,13 +928,14 @@ export class JournalModal extends Modal {
   }
 
   private async saveLocations(): Promise<void> {
-    if (!this.currentFile) return;
-    await this.app.fileManager.processFrontMatter(
-      this.currentFile,
-      (fm) => {
-        fm["locations"] = this.locations.length ? this.locations : null;
-      }
-    );
+    const file = this.currentFile;
+    if (!file) return;
+    const snapshot = [...this.locations];
+    await this.enqueueVaultOp(async () => {
+      await this.app.fileManager.processFrontMatter(file, (fm) => {
+        fm["locations"] = snapshot.length ? snapshot : null;
+      });
+    });
   }
 
   private updateLocationsSuggestions(): void {
@@ -922,21 +982,22 @@ export class JournalModal extends Modal {
   }
 
   private async saveExtraField(field: ExtraField, rawValue?: string): Promise<void> {
-    if (!this.currentFile) return;
-    let value: string | string[] | null;
+    const file = this.currentFile;
+    if (!file) return;
+    let snap: string | string[] | null;
     if (field.type === "list") {
       const chips = this.extraListValues[field.key] ?? [];
-      value = chips.length ? chips : null;
+      snap = chips.length ? chips : null;
     } else {
       const trimmed = (rawValue ?? "").trim();
-      value = trimmed || null;
+      snap = trimmed || null;
     }
-    await this.app.fileManager.processFrontMatter(
-      this.currentFile,
-      (fm) => {
-        fm[field.key] = value;
-      }
-    );
+    const key = field.key;
+    await this.enqueueVaultOp(async () => {
+      await this.app.fileManager.processFrontMatter(file, (fm) => {
+        fm[key] = snap;
+      });
+    });
   }
 
   private updateExtraFieldSuggestions(
@@ -1026,59 +1087,60 @@ export class JournalModal extends Modal {
         text: "\u00d7",
         attr: { "aria-label": `Remove ${name}` },
       });
-      removeBtn.addEventListener("click", async () => {
-        await this.app.fileManager.processFrontMatter(file, (fm) => {
-          const current: string[] = parseWikilinks(fm[mediaField]);
-          fm[mediaField] = current.filter((l) => l !== link);
+      removeBtn.addEventListener("click", () => {
+        void this.enqueueVaultOp(async () => {
+          await this.app.fileManager.processFrontMatter(file, (fm) => {
+            const current: string[] = parseWikilinks(fm[mediaField]);
+            fm[mediaField] = current.filter((l) => l !== link);
+          });
+          const cache = this.app.metadataCache.getFileCache(file);
+          const updated = parseWikilinks(cache?.frontmatter?.[mediaField]);
+          this.renderMediaGrid(updated, file);
         });
-        // Re-read and re-render
-        const cache = this.app.metadataCache.getFileCache(file);
-        const updated = parseWikilinks(cache?.frontmatter?.[mediaField]);
-        this.renderMediaGrid(updated, file);
       });
     }
   }
 
   private async handleMediaDrop(nativeFile: File): Promise<void> {
-    if (!this.currentFile) return;
+    const entryFile = this.currentFile;
+    if (!entryFile) return;
 
-    const mediaFolder = buildMediaFolder(this.currentFile.path);
+    await this.enqueueVaultOp(async () => {
+      const mediaFolder = buildMediaFolder(entryFile.path);
 
-    if (!this.app.vault.getFolderByPath(mediaFolder)) {
-      await this.app.vault.createFolder(mediaFolder);
-    }
+      if (!this.app.vault.getFolderByPath(mediaFolder)) {
+        await this.app.vault.createFolder(mediaFolder);
+      }
 
-    const { destPath, basename: safeBasename } = resolveAttachmentDestPath(
-      this.app.vault,
-      mediaFolder,
-      nativeFile.name
-    );
-    const arrayBuffer = await nativeFile.arrayBuffer();
-    let vaultFile = this.app.vault.getFileByPath(destPath);
-    if (!vaultFile) {
-      vaultFile = await this.app.vault.createBinary(
-        destPath,
-        arrayBuffer
+      const { destPath, basename: safeBasename } = resolveAttachmentDestPath(
+        this.app.vault,
+        mediaFolder,
+        nativeFile.name
       );
-    }
+      const arrayBuffer = await nativeFile.arrayBuffer();
+      let vaultFile = this.app.vault.getFileByPath(destPath);
+      if (!vaultFile) {
+        vaultFile = await this.app.vault.createBinary(
+          destPath,
+          arrayBuffer
+        );
+      }
 
-    const mediaField = this.plugin.settings.mediaAttachmentsField;
-    const link = toWikilink(safeBasename);
+      const mediaField = this.plugin.settings.mediaAttachmentsField;
+      const link = toWikilink(safeBasename);
 
-    await this.app.fileManager.processFrontMatter(
-      this.currentFile,
-      (fm) => {
+      await this.app.fileManager.processFrontMatter(entryFile, (fm) => {
         const current: string[] = parseWikilinks(fm[mediaField]);
         if (!current.includes(link)) {
           current.push(link);
           fm[mediaField] = current;
         }
-      }
-    );
+      });
 
-    const cache = this.app.metadataCache.getFileCache(this.currentFile);
-    const updated = parseWikilinks(cache?.frontmatter?.[mediaField]);
-    this.renderMediaGrid(updated, this.currentFile);
+      const cache = this.app.metadataCache.getFileCache(entryFile);
+      const updated = parseWikilinks(cache?.frontmatter?.[mediaField]);
+      this.renderMediaGrid(updated, entryFile);
+    });
   }
 
   // -------------------------------------------------------------------------
