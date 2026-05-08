@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.2 - 2026-05-07
+
+Commit: f654294 (2026-05-07T22:13:52-07:00)
+
+### Fixed
+
+- fix(journal): serialize all journal-modal vault edits through one promise queue so Markdown body merges and YAML frontmatter updates cannot complete out of order and revive stale content; debounced saves carry a navigation epoch discarded after date changes when a timer slips past flush; modal close persists the editor snapshot after the timer is cleared but before destruction.
+
 ## 1.2.1 - 2026-04-30
 
 Commit: e2267c9 (2026-04-30T10:26:11-07:00)
